@@ -1,22 +1,5 @@
-/*
-Version
-	Major
-	Minor
-Dependency
-	ModuleName
-	Version
-
-Method
-	Name
-	Man
-	Function
-
-Module
-	Name
-	Version
-	Dependencies
-	Methods
-*/
+#ifndef TCORE_MODULE_H_
+#define TCORE_MODULE_H_
 
 typedef struct tcore_Version tcore_Version;
 
@@ -49,3 +32,5 @@ struct tcore_Module {
 	LinkedList methodes;
 };
 
+
+#endif /* TCORE_MODULE_H_ */

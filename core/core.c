@@ -7,6 +7,9 @@ typedef struct _module _module;
 
 struct _module {
 	tcore_Module module;
+	int (*getModule)( tcore_Module* );
+	int (*onLoad)( getFunction );
+	int (*onDestroy)( void );
 	rll_Library lib;
 };
 
@@ -30,6 +33,7 @@ int loadModule(_module m, int level){
 	if(getModule == NULL){
 		return LOAD_FAILED;
 	}
+	
 	m.module = calloc(1, sizeof(tcore_Module));
 	if (level < getModule(m.module)){
 		return LOAD_FAILED;
