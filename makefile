@@ -1,0 +1,2 @@
+make:
+	cd core && $(MAKE)
