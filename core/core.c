@@ -1,20 +1,24 @@
 #include <stdio.h>
 
-#include "../lib/lll/LinkedList.h"
 #include "moduleHandler.h"
+#include "interfaceHandler.h"
 
 int main(void){
-    tcore_Module* calcModule = loadModule("examples/calculator/calc.so");
-    if(!calcModule){
-        return -1;
-    }
-    tcore_ModuleDefinition *calc= calcModule->getDefinition();
-    tcore_Interface *additionInterface = (tcore_Interface*)lll_elementAtIndex(*calc->interfaces, 0)->value;
-    int (*addition) (int, int) = (int (*) (int, int))additionInterface->function;
+    ih_activate();
+    mh_activate();
 
-
-    printf("addition interface man:\n%s\n", additionInterface->man);
-    printf("%i = addition(10, 5)\n", addition(10, 5));
-
-    return unloadModule(calcModule);
+    int calcModuleId = loadModule("examples/calculator/calc.so");
+    //int cliModuleId = loadModule("examples/cli/cli.so");
+    
+    printf("print all registered modules: \n");
+    lll_print(*(lll_List*)getAllRegisterdModules());
+    printf("printed all registered modules: \n");
+    
+    unloadModule(calcModuleId);
+    //unloadModule(cliModuleId);
+    
+    ih_deactivate();
+    mh_deactivate();
+    
+    return 0;    
 }

@@ -43,11 +43,11 @@ tcore_ModuleDefinition* getDefinition(){
 	return module;
 }
 
-int init(){
+int activate(tcore_Interface* (*getInterface)(const char*, tcore_Version, const char*)){
 	return SUCCESS;
 }
 
-int deinit(){
+int deactivate(){
 	return SUCCESS;
 }
 

@@ -2,60 +2,57 @@
 #include <stdio.h>
 
 #include "moduleHandler.h"
-#include "../lib/rll/runtimeLinking.h"
+#include "libraryHandler.h"
+#include "interfaceHandler.h"
+#include "../lib/lll/LinkedList.h"
 
-tcore_Module* loadModule(const char* path){
-    tcore_Module *module = malloc(sizeof(module));
-    char* error;
+lll_List *modules;
 
-    module->handle = rll_open(path);
-    if(!module->handle){
-        return NULL;
-        free(module);
-    }
-
-    int (*onLoad) ();
-
-    onLoad = rll_get(module->handle, MH_ON_LOAD);
-    if((error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->init = rll_get(module->handle, MH_INIT);
-    if((error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->getDefinition = rll_get(module->handle, MH_DEFINITION);
-    if((error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->deinit = rll_get(module->handle, MH_DEINIT);
-    if((error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-
-    onLoad();
-
-    return module;
+int mh_activate(){
+    modules = malloc(sizeof(lll_List));
+    return 0;
 }
-int unloadModule(tcore_Module* module){
-    char * error;
-    int (*onUnload) () = rll_get(module->handle, MH_ON_UNLOAD);
-    if((error = rll_error()) != NULL){
-        free(module);
-        rll_close(module->handle);
+int mh_deactivate(){
+    int i;
+    for(i = lll_size(*modules)-1; i >= 0; i--){
+        lll_Element *element = lll_elementAtIndex(*modules, i);
+        tcore_Module *module = (tcore_Module*)element->value;
+        unloadModule(module->id);
+    }
+    free(modules);
+    return 0;
+}
+
+int loadModule(const char* path){
+    tcore_Module *module = loadLibrary(path);
+    if(!module){
         return -1;
     }
-    onUnload();
+    registerInterface(module->getDefinition());
     
-    free(module);
-    rll_close(module->handle);
+    module->activate(getInterface);
+    
+    lll_Element *element = malloc(sizeof(lll_Element));
+    element->value = module;
+    lll_add(modules, element);
+    
+    return module->id;
+}
+int unloadModule(int id){
+    int i;
+    for(i = 0; i < lll_size(*modules); i++){
+        lll_Element *element = lll_elementAtIndex(*modules, i);
+        tcore_Module *module = (tcore_Module*)element->value;
+        if(module->id == id){
+        
+            deregisterInterface(module->getDefinition()->id);
+        
+            module->deactivate();
+            
+            lll_removeAtIndex(modules, i);
+            free(element);
+            unloadLibrary(module);
+        }
+    }
     return 0;   
 }
