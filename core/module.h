@@ -1,4 +1,4 @@
-#include "../lib/lll/LinkedList.h"
+#include "../lib/linkedListLibrary/LinkedList.h"
 
 #ifndef TCORE_MODULE_H_
 #define TCORE_MODULE_H_
@@ -24,6 +24,7 @@ struct tcore_Dependency {
 typedef struct tcore_Interface tcore_Interface;
 struct tcore_Interface {
 	char *name;
+	char *prototype;
 	char *man;
 	void (*function) ();
 };
@@ -41,7 +42,7 @@ typedef struct tcore_Module tcore_Module;
 struct tcore_Module {
     int id;
     void* handle;
-	int (*activate) (tcore_Interface* (*getInterface)(const char*, tcore_Version, const char*));
+	int (*activate) (tcore_Interface* (*getInterface)(const char*, int, const char*));
 	tcore_ModuleDefinition* (*getDefinition) (void);
 	int (*deactivate) (void);
 };

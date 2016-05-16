@@ -5,6 +5,7 @@
 
 int registerInterface(tcore_ModuleDefinition *moduleDef);
 int deregisterInterface(int id);
-tcore_Interface* getInterface(const char* moduleName, tcore_Version moduleVersion, const char* interfaceName);
+tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName);
+lll_List* getAllRegisterdModules();
 
 #endif /* _INTERFACES_HANDLER_H_ */

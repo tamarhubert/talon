@@ -16,6 +16,8 @@
 tcore_ModuleDefinition *module;
 
 int onLoad() {
+    printf("loading calculator module\n");
+
     // build module
 	module = malloc(sizeof(tcore_ModuleDefinition));
 	module->name = MODULE_NAME;
@@ -27,10 +29,11 @@ int onLoad() {
 	// addition
 	tcore_Interface *additionInterface = malloc(sizeof(tcore_Interface));
 	additionInterface->name = "addition";
+	additionInterface->prototype = "int addition (int, int)";
 	additionInterface->man = "int addition (int x, int y)\n\
-			\tint x\tThe first number.\n\
-			\tint y\tThe second number.\n\
-			\treturns\tThe two numbers added.\n";		
+\tint x\tThe first number.\n\
+\tint y\tThe second number.\n\
+\treturns\tThe two numbers added.\n";		
 	additionInterface->function = (void (*) ())addition;
 	lll_Element *additionElement = malloc(sizeof(lll_Element));
 	additionElement->value = additionInterface;
@@ -43,15 +46,20 @@ tcore_ModuleDefinition* getDefinition(){
 	return module;
 }
 
-int activate(tcore_Interface* (*getInterface)(const char*, tcore_Version, const char*)){
+int activate(tcore_Interface* (*getInterface)(const char*, int, const char*)){
+    printf("activate calculator module\n");
+
 	return SUCCESS;
 }
 
 int deactivate(){
+    printf("deactivate calculator module\n");
 	return SUCCESS;
 }
 
 int onUnload(){
+    printf("unloading calculator module\n");
+
     free(module->dependencies);
     lll_Element *additionElement = lll_elementAtIndex(*module->interfaces, 0);
     free(additionElement->value);

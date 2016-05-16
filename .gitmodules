@@ -1,0 +1,6 @@
+[submodule "lib/runtimeLinkingLibrary"]
+	path = lib/runtimeLinkingLibrary
+	url = https://github.com/tamarhubert/runtimeLinkingLibrary.git
+[submodule "lib/linkedListLibrary"]
+	path = lib/linkedListLibrary
+	url = https://github.com/tamarhubert/linkedListLibrary.git
