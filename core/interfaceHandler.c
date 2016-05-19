@@ -6,7 +6,6 @@
 #include "../lib/linkedListLibrary/LinkedList.h"
 
 lll_List *moduleDefs;
-int id_count = 0;
 
 int ih_activate(){
     moduleDefs = malloc(sizeof(lll_List));
@@ -23,20 +22,18 @@ int ih_deactivate(){
     return 0;
 }
 
-int registerInterface(tcore_ModuleDefinition *moduleDef){
+int registerInterface(int id, tcore_ModuleDefinition *moduleDef){
     printf("%s\n",moduleDef->name);
     lll_Element *element = malloc(sizeof(lll_Element));
     element->value = moduleDef;
     lll_add(moduleDefs, element);
     
-    moduleDef->id = id_count;
-    id_count++;
+    moduleDef->id = id;
     
     return moduleDef->id;
 }
 int deregisterInterface(int id){
     int i;
-    printf("DEBUG: deregister interface with id %i\n", id);
     for(i = 0; i < lll_size(*moduleDefs); i++){
         lll_Element *element = lll_elementAtIndex(*moduleDefs, i);
         tcore_ModuleDefinition *moduleDef = (tcore_ModuleDefinition*)element->value;

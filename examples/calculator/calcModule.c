@@ -3,7 +3,7 @@
 
 #include "calc.h"
 #include "../../core/module.h"
-#include "../../lib/lll/LinkedList.h"
+#include "../../lib/linkedListLibrary/LinkedList.h"
 
 #define MODULE_NAME "calculator"
 #define MODULE_VERSION_MAJOR 0
@@ -23,11 +23,11 @@ int onLoad() {
 	module->name = MODULE_NAME;
 	module->version.major = MODULE_VERSION_MAJOR;
 	module->version.minor = MODULE_VERSION_MINOR;
-	module->dependencies = malloc(sizeof(lll_List));
-	module->interfaces = malloc(sizeof(lll_List));
+	module->dependencies = calloc(1, sizeof(lll_List));
+	module->interfaces = calloc(1, sizeof(lll_List));
 
 	// addition
-	tcore_Interface *additionInterface = malloc(sizeof(tcore_Interface));
+	tcore_Interface *additionInterface = calloc(1, sizeof(tcore_Interface));
 	additionInterface->name = "addition";
 	additionInterface->prototype = "int addition (int, int)";
 	additionInterface->man = "int addition (int x, int y)\n\

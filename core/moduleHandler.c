@@ -31,7 +31,7 @@ int loadModule(const char* path){
     if(!module){
         return -1;
     }
-    registerInterface(module->getDefinition());
+    registerInterface(module->id, module->getDefinition());
     module->activate(getInterface);
     lll_Element *element = malloc(sizeof(lll_Element));
     element->value = module;
@@ -46,7 +46,7 @@ int unloadModule(int id){
         tcore_Module *module = (tcore_Module*)element->value;
         lll_print(*modules);
         if(module->id == id){
-            deregisterInterface(module->getDefinition()->id);        
+            deregisterInterface(id);
             module->deactivate();
             lll_removeAtIndex(modules, i);
             free(element);

@@ -3,7 +3,7 @@
 
 #include "cli.h"
 #include "../../core/module.h"
-#include "../../lib/lll/LinkedList.h"
+#include "../../lib/linkedListLibrary/LinkedList.h"
 
 #define MODULE_NAME "cli"
 #define MODULE_VERSION_MAJOR 0
@@ -57,7 +57,6 @@ int deactivate(){
 
 int onUnload(){
     printf("unloading cli module\n");
-
     free(module->dependencies);
     lll_Element *cliElement = lll_elementAtIndex(*module->interfaces, 0);
     free(cliElement->value);
