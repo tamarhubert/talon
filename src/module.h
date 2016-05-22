@@ -1,4 +1,4 @@
-#include "../lib/linkedListLibrary/LinkedList.h"
+#include "../lib/linkedListLibrary/src/linkedList.h"
 
 #ifndef TCORE_MODULE_H_
 #define TCORE_MODULE_H_

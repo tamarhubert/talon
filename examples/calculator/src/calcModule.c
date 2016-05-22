@@ -2,29 +2,29 @@
 #include <stdlib.h>
 
 #include "calc.h"
-#include "../../core/module.h"
-#include "../../lib/linkedListLibrary/LinkedList.h"
+#include "../../../src/module.h"
+#include "../../../lib/linkedListLibrary/src/linkedList.h"
 
-#define MODULE_NAME "calculator"
-#define MODULE_VERSION_MAJOR 0
-#define MODULE_VERSION_MINOR 0
+#define calc_module_NAME "calculator"
+#define calc_module_VERSION_MAJOR 0
+#define calc_module_VERSION_MINOR 0
 
 #define ABORT 2
 #define WARNING 1
 #define SUCCESS 0
 
-tcore_ModuleDefinition *module;
+tcore_ModuleDefinition *calc_module;
 
 int onLoad() {
     printf("loading calculator module\n");
 
-    // build module
-	module = malloc(sizeof(tcore_ModuleDefinition));
-	module->name = MODULE_NAME;
-	module->version.major = MODULE_VERSION_MAJOR;
-	module->version.minor = MODULE_VERSION_MINOR;
-	module->dependencies = calloc(1, sizeof(lll_List));
-	module->interfaces = calloc(1, sizeof(lll_List));
+    // build calc_module
+	calc_module = malloc(sizeof(tcore_ModuleDefinition));
+	calc_module->name = calc_module_NAME;
+	calc_module->version.major = calc_module_VERSION_MAJOR;
+	calc_module->version.minor = calc_module_VERSION_MINOR;
+	calc_module->dependencies = calloc(1, sizeof(lll_List));
+	calc_module->interfaces = calloc(1, sizeof(lll_List));
 
 	// addition
 	tcore_Interface *additionInterface = calloc(1, sizeof(tcore_Interface));
@@ -37,13 +37,14 @@ int onLoad() {
 	additionInterface->function = (void (*) ())addition;
 	lll_Element *additionElement = malloc(sizeof(lll_Element));
 	additionElement->value = additionInterface;
-	lll_add(module->interfaces, additionElement);
+	lll_add(calc_module->interfaces, additionElement);
 
 	return SUCCESS;
 }
 
 tcore_ModuleDefinition* getDefinition(){
-	return module;
+    printf("calc moudle definition at %p\n", calc_module);
+	return calc_module;
 }
 
 int activate(tcore_Interface* (*getInterface)(const char*, int, const char*)){
@@ -58,15 +59,15 @@ int deactivate(){
 }
 
 int onUnload(){
-    printf("unloading calculator module\n");
+    printf("unloading %s calc_module at %p (calcModule.c:onUnload)\n", calc_module->name, calc_module);
 
-    free(module->dependencies);
-    lll_Element *additionElement = lll_elementAtIndex(*module->interfaces, 0);
+    free(calc_module->dependencies);
+    lll_Element *additionElement = lll_elementAtIndex(*calc_module->interfaces, 0);
     free(additionElement->value);
     free(additionElement);
-    free(module->interfaces);
-    free(module);
-    module = NULL;
+    free(calc_module->interfaces);
+    free(calc_module);
+    calc_module = NULL;
 	return SUCCESS;
 }
 

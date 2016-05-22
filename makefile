@@ -1,2 +1,2 @@
 make:
-	cd core && $(MAKE)
+	cd src && $(MAKE)

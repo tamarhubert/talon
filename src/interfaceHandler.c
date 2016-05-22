@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "interfaceHandler.h"
-#include "../lib/linkedListLibrary/LinkedList.h"
+#include "../lib/linkedListLibrary/src/linkedList.h"
 
 lll_List *moduleDefs;
 
@@ -23,7 +23,7 @@ int ih_deactivate(){
 }
 
 int registerInterface(int id, tcore_ModuleDefinition *moduleDef){
-    printf("%s\n",moduleDef->name);
+    printf("registering interfaces of %s\n",moduleDef->name);
     lll_Element *element = malloc(sizeof(lll_Element));
     element->value = moduleDef;
     lll_add(moduleDefs, element);

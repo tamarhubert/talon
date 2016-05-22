@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "libraryHandler.h"
-#include "../lib/runtimeLinkingLibrary/runtimeLinking.h"
+#include "../lib/runtimeLinkingLibrary/src/runtimeLinking.h"
 
 char *lh_error;
 int id = 0;

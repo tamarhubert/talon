@@ -4,7 +4,7 @@
 #include "moduleHandler.h"
 #include "libraryHandler.h"
 #include "interfaceHandler.h"
-#include "../lib/linkedListLibrary/LinkedList.h"
+#include "../lib/linkedListLibrary/src/linkedList.h"
 
 void mh_print(void);
 
@@ -44,7 +44,6 @@ int unloadModule(int id){
     for(i = 0; i < lll_size(*modules); i++){
         lll_Element *element = lll_elementAtIndex(*modules, i);
         tcore_Module *module = (tcore_Module*)element->value;
-        lll_print(*modules);
         if(module->id == id){
             deregisterInterface(id);
             module->deactivate();

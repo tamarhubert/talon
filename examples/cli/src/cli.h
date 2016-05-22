@@ -1,7 +1,7 @@
 #ifndef _CALC_H_
 #define _CALC_H_
 
-#include "../../core/module.h"
+#include "../../../src/module.h"
 
 void cli();
 
