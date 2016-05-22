@@ -5,7 +5,7 @@
 
 #define MH_LOAD "onLoad"
 #define MH_ACTIVATE "onActivation"
-#define MH_DEFINITION "getDefinition"
+#define MH_METADATA "getMetadata"
 #define MH_DEACTIVATE "onDeactivation"
 #define MH_UNLOAD "onUnload"
 
@@ -29,8 +29,8 @@ struct tcore_Interface {
 	void (*function) ();
 };
 
-typedef struct tcore_ModuleDefinition tcore_ModuleDefinition;
-struct tcore_ModuleDefinition {
+typedef struct tcore_Metadata tcore_Metadata;
+struct tcore_Metadata {
     int id;
 	char *name;
 	tcore_Version version;
@@ -43,7 +43,7 @@ struct tcore_Module {
     int id;
     void* handle;
 	int (*activate) (tcore_Interface* (*getInterface)(const char*, int, const char*));
-	tcore_ModuleDefinition* (*getDefinition) (void);
+	tcore_Metadata* (*getMetadata) (void);
 	int (*deactivate) (void);
 };
 

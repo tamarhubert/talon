@@ -31,7 +31,7 @@ int loadModule(const char* path){
     if(!module){
         return -1;
     }
-    registerInterface(module->id, module->getDefinition());
+    registerInterface(module->id, module->getMetadata());
     module->activate(getInterface);
     lll_Element *element = malloc(sizeof(lll_Element));
     element->value = module;

@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-int registerInterface(int id, tcore_ModuleDefinition *moduleDef);
+int registerInterface(int id, tcore_Metadata *metadata);
 int deregisterInterface(int id);
 tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName);
 lll_List* getAllRegisterdModules();

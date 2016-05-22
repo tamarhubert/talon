@@ -32,7 +32,7 @@ tcore_Module* loadLibrary(const char* path){
         free(module);
         return NULL;
     }
-    module->getDefinition = rll_get(module->handle, MH_DEFINITION);
+    module->getMetadata = rll_get(module->handle, MH_METADATA);
     if((lh_error = rll_error()) != NULL){
         rll_close(module->handle);
         free(module);

@@ -13,11 +13,11 @@
 #define WARNING 1
 #define SUCCESS 0
 
-tcore_ModuleDefinition *cli_module;
+tcore_Metadata *cli_module;
 
 int onLoad() {
     // build cli_module
-	cli_module = malloc(sizeof(tcore_ModuleDefinition));
+	cli_module = malloc(sizeof(tcore_Metadata));
 	cli_module->name = cli_module_NAME;
 	cli_module->version.major = cli_module_VERSION_MAJOR;
 	cli_module->version.minor = cli_module_VERSION_MINOR;
@@ -38,7 +38,7 @@ int onLoad() {
 	return SUCCESS;
 }
 
-tcore_ModuleDefinition* getDefinition(){
+tcore_Metadata* getMetadata(){
 	return cli_module;
 }
 
@@ -47,12 +47,11 @@ int onActivation(tcore_Interface* (*_getInterface)(const char*, int, const char*
 	return SUCCESS;
 }
 
-int onDeactivativation(){
+int onDeactivation(){
 	return SUCCESS;
 }
 
 int onUnload(){
-    
     free(cli_module->dependencies);
     lll_Element *cliElement = lll_elementAtIndex(*cli_module->interfaces, 0);
     free(cliElement->value);

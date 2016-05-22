@@ -13,11 +13,11 @@
 #define WARNING 1
 #define SUCCESS 0
 
-tcore_ModuleDefinition *calc_module;
+tcore_Metadata *calc_module;
 
 int onLoad() {
     // build calc_module
-	calc_module = malloc(sizeof(tcore_ModuleDefinition));
+	calc_module = malloc(sizeof(tcore_Metadata));
 	calc_module->name = calc_module_NAME;
 	calc_module->version.major = calc_module_VERSION_MAJOR;
 	calc_module->version.minor = calc_module_VERSION_MINOR;
@@ -40,7 +40,7 @@ int onLoad() {
 	return SUCCESS;
 }
 
-tcore_ModuleDefinition* getDefinition(){
+tcore_Metadata* getMetadata(){
 	return calc_module;
 }
 
