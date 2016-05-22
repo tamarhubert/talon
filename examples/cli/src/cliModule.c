@@ -16,8 +16,6 @@
 tcore_ModuleDefinition *cli_module;
 
 int onLoad() {
-    printf("loading cli cli_module\n");
-
     // build cli_module
 	cli_module = malloc(sizeof(tcore_ModuleDefinition));
 	cli_module->name = cli_module_NAME;
@@ -41,23 +39,19 @@ int onLoad() {
 }
 
 tcore_ModuleDefinition* getDefinition(){
-    printf("cli moudle definition at %p\n", cli_module);
 	return cli_module;
 }
 
-int activate(tcore_Interface* (*_getInterface)(const char*, int, const char*)){
-    printf("activating cli cli_module\n");
+int onActivation(tcore_Interface* (*_getInterface)(const char*, int, const char*)){
     setResolver(_getInterface);
 	return SUCCESS;
 }
 
-int deactivate(){
-    printf("deactivating cli cli_module\n");
+int onDeactivativation(){
 	return SUCCESS;
 }
 
 int onUnload(){
-    printf("unloading %s cli_module at %p (clicli_module.c:onUnload)\n", cli_module->name, cli_module);
     
     free(cli_module->dependencies);
     lll_Element *cliElement = lll_elementAtIndex(*cli_module->interfaces, 0);

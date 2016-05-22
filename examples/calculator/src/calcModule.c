@@ -16,8 +16,6 @@
 tcore_ModuleDefinition *calc_module;
 
 int onLoad() {
-    printf("loading calculator module\n");
-
     // build calc_module
 	calc_module = malloc(sizeof(tcore_ModuleDefinition));
 	calc_module->name = calc_module_NAME;
@@ -43,24 +41,18 @@ int onLoad() {
 }
 
 tcore_ModuleDefinition* getDefinition(){
-    printf("calc moudle definition at %p\n", calc_module);
 	return calc_module;
 }
 
-int activate(tcore_Interface* (*getInterface)(const char*, int, const char*)){
-    printf("activate calculator module\n");
-
+int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
 	return SUCCESS;
 }
 
-int deactivate(){
-    printf("deactivate calculator module\n");
+int onDeactivation(){
 	return SUCCESS;
 }
 
 int onUnload(){
-    printf("unloading %s calc_module at %p (calcModule.c:onUnload)\n", calc_module->name, calc_module);
-
     free(calc_module->dependencies);
     lll_Element *additionElement = lll_elementAtIndex(*calc_module->interfaces, 0);
     free(additionElement->value);

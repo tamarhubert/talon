@@ -20,7 +20,7 @@ tcore_Module* loadLibrary(const char* path){
 
     int (*onLoad) ();
 
-    onLoad = rll_get(module->handle, MH_ON_LOAD);
+    onLoad = rll_get(module->handle, MH_LOAD);
     if((lh_error = rll_error()) != NULL){
         rll_close(module->handle);
         free(module);
@@ -51,7 +51,7 @@ tcore_Module* loadLibrary(const char* path){
 }
 
 int unloadLibrary(tcore_Module* module){
-    int (*onUnload) (void) = rll_get(module->handle, MH_ON_UNLOAD);
+    int (*onUnload) (void) = rll_get(module->handle, MH_UNLOAD);
     if((lh_error = rll_error()) != NULL){
         free(module);
         rll_close(module->handle);

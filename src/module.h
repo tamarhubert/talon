@@ -3,11 +3,11 @@
 #ifndef TCORE_MODULE_H_
 #define TCORE_MODULE_H_
 
-#define MH_ON_LOAD "onLoad"
-#define MH_ACTIVATE "activate"
+#define MH_LOAD "onLoad"
+#define MH_ACTIVATE "onActivation"
 #define MH_DEFINITION "getDefinition"
-#define MH_DEACTIVATE "deactivate"
-#define MH_ON_UNLOAD "onUnload"
+#define MH_DEACTIVATE "onDeactivation"
+#define MH_UNLOAD "onUnload"
 
 typedef struct tcore_Version tcore_Version;
 struct tcore_Version {

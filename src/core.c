@@ -17,7 +17,6 @@ int main(void){
     }
     else {
         void(*cli)(void) = (void(*)(void))cliInterface->function;
-        printf("calling cli::cli\n");
         cli();
     }
     
