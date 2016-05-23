@@ -16,23 +16,34 @@ int mh_activate(){
 }
 
 int mh_deactivate(){
-    int i;
+    int i, status = 0;
     for(i = lll_size(*modules)-1; i >= 0; i--){
         lll_Element *element = lll_elementAtIndex(*modules, i);
         tcore_Module *module = (tcore_Module*)element->value;
-        unloadModule(module->id);
+        int state = unloadModule(module->id);
+        if(state < status){
+            status = state;
+        }
     }
     free(modules);
-    return 0;
+    return status;
 }
 
 int loadModule(const char* path){
     tcore_Module *module = loadLibrary(path);
     if(!module){
-        return -1;
+        return FATAL;
     }
-    registerInterface(module->id, module->getMetadata());
-    module->activate(getInterface);
+    if(registerInterface(module->id, module->getMetadata()) < WARNING){
+        unloadLibrary(module);
+        return FATAL;
+    }
+    if(module->activate(getInterface) < WARNING){
+        deregisterInterface(module->id);
+        unloadLibrary(module);
+        return FATAL;
+    }
+    
     lll_Element *element = malloc(sizeof(lll_Element));
     element->value = module;
     lll_add(modules, element);      
@@ -50,8 +61,8 @@ int unloadModule(int id){
             lll_removeAtIndex(modules, i);
             free(element);
             unloadLibrary(module);
-            return 0;
+            return SUCCESS;
         }
     }
-    return -1;   
+    return WARNING;   
 }

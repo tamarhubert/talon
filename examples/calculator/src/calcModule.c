@@ -9,10 +9,6 @@
 #define calc_module_VERSION_MAJOR 0
 #define calc_module_VERSION_MINOR 0
 
-#define ABORT 2
-#define WARNING 1
-#define SUCCESS 0
-
 tcore_Metadata *calc_module;
 
 int onLoad() {

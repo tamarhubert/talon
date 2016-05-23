@@ -44,7 +44,10 @@ tcore_Module* loadLibrary(const char* path){
         free(module);
         return NULL;
     }
-    onLoad();
+    if(onLoad() < WARNING){
+        return NULL;
+    }
+    
     module->id = id;
     id++;
     return module;
@@ -55,10 +58,14 @@ int unloadLibrary(tcore_Module* module){
     if((lh_error = rll_error()) != NULL){
         free(module);
         rll_close(module->handle);
-        return -1;
+        return WARNING;
     }
-    onUnload();   
+    if(onUnload() < WARNING){
+        free(module);
+        rll_close(module->handle);
+        return WARNING;
+    }       
     free(module);
     rll_close(module->handle);
-    return 0;   
+    return SUCCESS;
 }

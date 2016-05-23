@@ -19,7 +19,7 @@ int ih_deactivate(){
         deregisterInterface(moduleDef->id);
     }
     free(moduleDefs);
-    return 0;
+    return SUCCESS;
 }
 
 int registerInterface(int id, tcore_Metadata *metadata){
@@ -39,10 +39,10 @@ int deregisterInterface(int id){
         if(metadata->id == id){
             lll_removeAtIndex(moduleDefs, i);
             free(element);
-            return 0;
+            return SUCCESS;
         }
     }
-    return -1;
+    return WARNING;
 }
 
 tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName){
@@ -63,8 +63,4 @@ tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const c
         }
     }
     return NULL;
-}
-
-lll_List* getAllRegisterdModules(){
-    return moduleDefs;
 }

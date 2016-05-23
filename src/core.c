@@ -9,7 +9,16 @@ int main(void){
     mh_activate();
 
     int calcModuleId =  loadModule("examples/calculator/obj/calc.so");
+    if(calcModuleId < WARNING){
+        printf("-- [ FATAL ] -- failed to load calc module");
+        return FATAL;
+    }
     int cliModuleId =   loadModule("examples/cli/obj/cli.so");
+    if(cliModuleId < WARNING){
+        printf("-- [ FATAL ] -- failed to load cli module");
+        unloadModule(calcModuleId);
+        return FATAL;
+    }
     
     tcore_Interface *cliInterface = getInterface("cli", 0, "cli");
     if(!cliInterface){
