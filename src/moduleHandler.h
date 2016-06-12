@@ -3,7 +3,7 @@
 
 #include "module.h"
 
-int loadModule(const char*);
-int unloadModule(int);
+int loadModule(tcore_Module*);
+int unloadModule(tcore_Module*);
 
 #endif /* _MODULE_HANDLER_H_ */

@@ -15,40 +15,41 @@
 
 typedef struct tcore_Version tcore_Version;
 struct tcore_Version {
-	int major;
-	int minor;
+    int major;
+    int minor;
 };
 
 typedef struct tcore_Dependency tcore_Dependency;
 struct tcore_Dependency {
-	char *moduleName;
-	tcore_Version version;
+    char *moduleName;
+    tcore_Version version;
 };
 
 typedef struct tcore_Interface tcore_Interface;
 struct tcore_Interface {
-	char *name;
-	char *prototype;
-	char *man;
-	void (*function) ();
+    char *name;
+    char *prototype;
+    char *man;
+    void (*function) ();
 };
 
 typedef struct tcore_Metadata tcore_Metadata;
 struct tcore_Metadata {
     int id;
-	char *name;
-	tcore_Version version;
-	lll_List *dependencies;
-	lll_List *interfaces;
+    char *name;
+    tcore_Version version;
+    lll_List *dependencies;
+    lll_List *interfaces;
 };
 
 typedef struct tcore_Module tcore_Module;
 struct tcore_Module {
     int id;
-    void* handle;
-	int (*activate) (tcore_Interface* (*getInterface)(const char*, int, const char*));
-	tcore_Metadata* (*getMetadata) (void);
-	int (*deactivate) (void);
+    int (*load) (void);
+    int (*activate) (tcore_Interface* (*getInterface)(const char*, int, const char*));
+    tcore_Metadata* (*getMetadata) (void);
+    int (*deactivate) (void);
+    int (*unload) (void);
 };
 
 

@@ -8,64 +8,80 @@ char *lh_error;
 int id = 0;
 
 
-tcore_Module* loadLibrary(const char* path){
-    tcore_Module *module = malloc(sizeof(tcore_Module));
+tcore_Library* loadLibrary(const char* path){
+    tcore_Library *library = malloc(sizeof(tcore_Library));
 
-    module->handle = rll_open(path);
-    if(!module->handle){
-        free(module);
+    library->handle = rll_open(path);
+    if(!library->handle){
+        free(library);
         lh_error = rll_error();
         return NULL;
     }
 
-    int (*onLoad) ();
-
-    onLoad = rll_get(module->handle, MH_LOAD);
-    if((lh_error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->activate = rll_get(module->handle, MH_ACTIVATE);
-    if((lh_error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->getMetadata = rll_get(module->handle, MH_METADATA);
-    if((lh_error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    module->deactivate = rll_get(module->handle, MH_DEACTIVATE);
-    if((lh_error = rll_error()) != NULL){
-        rll_close(module->handle);
-        free(module);
-        return NULL;
-    }
-    if(onLoad() < WARNING){
-        return NULL;
-    }
+    tcore_Module *module = malloc(sizeof(tcore_Module));
     
-    module->id = id;
-    id++;
-    return module;
+    module->load = rll_get(library->handle, MH_LOAD);
+    if((lh_error = rll_error()) != NULL){
+        rll_close(library->handle);
+	free(library);
+        free(module);
+        return NULL;
+    }
+
+    module->activate = rll_get(library->handle, MH_ACTIVATE);
+    if((lh_error = rll_error()) != NULL){
+        rll_close(library->handle);
+        free(library);
+        free(module);
+        return NULL;
+    }
+
+    module->getMetadata = rll_get(library->handle, MH_METADATA);
+    if((lh_error = rll_error()) != NULL){
+        rll_close(library->handle);
+        free(library);
+        free(module);
+        return NULL;
+    }
+
+    module->deactivate = rll_get(library->handle, MH_DEACTIVATE);
+    if((lh_error = rll_error()) != NULL){
+        rll_close(library->handle);
+        free(library);
+        free(module);
+        return NULL;
+    }
+
+    module->unload = rll_get(library->handle, MH_UNLOAD);
+    if((lh_error = rll_error()) != NULL){
+        rll_close(library->handle);
+        free(library);
+        free(module);
+        return NULL;
+    }
+
+    module->id = ++id;
+    library->module = module;
+    return library;
 }
 
-int unloadLibrary(tcore_Module* module){
-    int (*onUnload) (void) = rll_get(module->handle, MH_UNLOAD);
-    if((lh_error = rll_error()) != NULL){
-        free(module);
-        rll_close(module->handle);
+int unloadLibrary(tcore_Library* library){
+    if(NULL == library){
         return WARNING;
     }
-    if(onUnload() < WARNING){
-        free(module);
-        rll_close(module->handle);
+
+    if(NULL == library->module || NULL == library->handle){
+        if(NULL != library->module){
+            free(library->module);
+        }
+        if(NULL != library->handle){
+            rll_close(library->handle);
+        }
+        free(library);
         return WARNING;
-    }       
-    free(module);
-    rll_close(module->handle);
+    }
+    rll_close(library->handle);
+    free(library->module);
+    free(library);
     return SUCCESS;
 }
