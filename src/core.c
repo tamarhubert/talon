@@ -4,30 +4,34 @@
 #include "moduleHandler.h"
 #include "interfaceHandler.h"
 
+int tcore_isActive = 0;
+
+void tcore_deactivate(void) {
+    tcore_isActive = 1;
+}
+
+int isActive(void){
+    return tcore_isActive;
+}
+
+
 int main(void){
     ih_activate();
     mh_activate();
 
     int calcModuleId =  loadModule("examples/calculator/obj/calc.so");
     if(calcModuleId < WARNING){
-        printf("-- [ FATAL ] -- failed to load calc module");
+        printf("-- [ FATAL ] -- failed to load calc module\n");
         return FATAL;
     }
     int cliModuleId =   loadModule("examples/cli/obj/cli.so");
     if(cliModuleId < WARNING){
-        printf("-- [ FATAL ] -- failed to load cli module");
+        printf("-- [ FATAL ] -- failed to load cli module\n");
         unloadModule(calcModuleId);
         return FATAL;
     }
     
-    tcore_Interface *cliInterface = getInterface("cli", 0, "cli");
-    if(!cliInterface){
-        printf("cli::cli interface not found\n");
-    }
-    else {
-        void(*cli)(void) = (void(*)(void))cliInterface->function;
-        cli();
-    }
+    while(isActive()){}
     
     unloadModule(calcModuleId);
     unloadModule(cliModuleId);
@@ -35,5 +39,5 @@ int main(void){
     ih_deactivate();
     mh_deactivate();
     
-    return 0;    
+    return 0;
 }

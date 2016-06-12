@@ -4,3 +4,6 @@
 [submodule "lib/linkedListLibrary"]
 	path = lib/linkedListLibrary
 	url = https://github.com/tamarhubert/linkedListLibrary.git
+[submodule "lib/threadingProcessingLibrary"]
+	path = lib/threadingProcessingLibrary
+	url = https://github.com/tamarhubert/threadingProcessingLibrary.git
