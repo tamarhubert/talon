@@ -11,7 +11,7 @@
 
 tcore_Metadata *coreApi_module;
 
-int onLoad() {
+int coreApi_onLoad() {
     // build coreApi_module
     coreApi_module = malloc(sizeof(tcore_Metadata));
     coreApi_module->name = COREAPI_MODULE_NAME;
@@ -32,21 +32,23 @@ int onLoad() {
     return SUCCESS;
 }
 
-tcore_Metadata* getMetadata(){
+tcore_Metadata* coreApi_getMetadata(){
 	return coreApi_module;
 }
 
-int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
+int coreApi_onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
 	return SUCCESS;
 }
 
-int onDeactivation(){
+int coreApi_onDeactivation(){
 	return SUCCESS;
 }
 
-int onUnload(){
+int coreApi_onUnload(){
     lll_freeList(coreApi_module->dependencies);
-    void *shotdownInterface = lll_elementAtIndex(*coreApi_module->interfaces, 0);
+    tcore_Interface *shotdownInterface = NULL;
+    lll_elementAtIndex(coreApi_module->interfaces, 0, (void**)&shotdownInterface);
+    lll_removeAtIndex(coreApi_module->interfaces,0);
     free(shotdownInterface);
     lll_freeList(coreApi_module->interfaces);
     free(coreApi_module);

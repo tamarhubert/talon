@@ -10,7 +10,6 @@ struct tcore_Library {
     tcore_Module *module;
 };
 
-
 tcore_Library* loadLibrary(const char*);
 int unloadLibrary(tcore_Library*);
 
