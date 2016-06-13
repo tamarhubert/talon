@@ -7,7 +7,7 @@
 
 int tcore_isActive = 1;
 
-void tcore_deactivate(void) {
+void tcore_shutdown(void) {
     tcore_isActive = 0;
 }
 
