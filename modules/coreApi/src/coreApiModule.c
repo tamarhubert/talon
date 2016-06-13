@@ -17,8 +17,8 @@ int onLoad() {
     coreApi_module->name = COREAPI_MODULE_NAME;
     coreApi_module->version.major = COREAPI_MODULE_VERSION_MAJOR;
     coreApi_module->version.minor = COREAPI_MODULE_VERSION_MINOR;
-    coreApi_module->dependencies = calloc(1, sizeof(lll_List));
-    coreApi_module->interfaces = calloc(1, sizeof(lll_List));
+    coreApi_module->dependencies = lll_newList();
+    coreApi_module->interfaces = lll_newList();
 
     // shotdown
     tcore_Interface *shotdownInterface = calloc(1, sizeof(tcore_Interface));
@@ -45,10 +45,10 @@ int onDeactivation(){
 }
 
 int onUnload(){
-    free(coreApi_module->dependencies);
+    lll_freeList(coreApi_module->dependencies);
     void *shotdownInterface = lll_elementAtIndex(*coreApi_module->interfaces, 0);
     free(shotdownInterface);
-    free(coreApi_module->interfaces);
+    lll_freeList(coreApi_module->interfaces);
     free(coreApi_module);
     coreApi_module = NULL;
     return SUCCESS;

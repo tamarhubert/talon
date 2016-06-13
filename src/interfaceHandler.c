@@ -8,37 +8,33 @@
 lll_List *moduleDefs;
 
 int ih_activate(){
-    moduleDefs = malloc(sizeof(lll_List));
+    moduleDefs = lll_newList();
     return 0;
 }
 int ih_deactivate(){
     int i;
-    for(i = lll_size(*moduleDefs)-1; i >= 0; i--){
-        lll_Element *element = lll_elementAtIndex(*moduleDefs, i);
-        tcore_Metadata *moduleDef = (tcore_Metadata*)element->value;
+    for(i = lll_size(moduleDefs)-1; i >= 0; i--){
+        tcore_Metadata *moduleDef = NULL;
+        lll_elementAtIndex(moduleDefs, i, (void**)&moduleDef);
         deregisterInterface(moduleDef->id);
     }
-    free(moduleDefs);
+    lll_freeList(moduleDefs);
     return SUCCESS;
 }
 
 int registerInterface(int id, tcore_Metadata *metadata){
-    lll_Element *element = malloc(sizeof(lll_Element));
-    element->value = metadata;
-    lll_add(moduleDefs, element);
-    
     metadata->id = id;
-    
+    lll_add(moduleDefs, metadata);
+
     return metadata->id;
 }
 int deregisterInterface(int id){
     int i;
-    for(i = 0; i < lll_size(*moduleDefs); i++){
-        lll_Element *element = lll_elementAtIndex(*moduleDefs, i);
-        tcore_Metadata *metadata = (tcore_Metadata*)element->value;
+    for(i = 0; i < lll_size(moduleDefs); i++){
+        tcore_Metadata *metadata = NULL;
+        lll_elementAtIndex(moduleDefs, i, (void**)&metadata); 
         if(metadata->id == id){
             lll_removeAtIndex(moduleDefs, i);
-            free(element);
             return SUCCESS;
         }
     }
@@ -47,15 +43,15 @@ int deregisterInterface(int id){
 
 tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName){
     int i;
-    for(i = 0; i < lll_size(*moduleDefs); i++){
-        lll_Element *mdElement = lll_elementAtIndex(*moduleDefs, i);
-        tcore_Metadata *metadata = (tcore_Metadata*)mdElement->value;
+    for(i = 0; i < lll_size(moduleDefs); i++){
+        tcore_Metadata *metadata = NULL;
+        lll_elementAtIndex(moduleDefs, i, (void**)&metadata);
         if(metadata->version.major == moduleVersion
                 && strcmp(metadata->name, moduleName) == 0){
             int j; lll_List *interfaces = metadata->interfaces;
-            for(j = 0; j < lll_size(*interfaces); j++){
-                lll_Element *iElement = lll_elementAtIndex(*interfaces, i);
-                tcore_Interface *interface = (tcore_Interface*)iElement->value;
+            for(j = 0; j < lll_size(interfaces); j++){
+                tcore_Interface *interface = NULL;
+                lll_elementAtIndex(interfaces, i, (void**)&interface);
                 if(strcmp(interface->name, interfaceName) == 0){
                     return interface;
                 }
