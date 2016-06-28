@@ -3,6 +3,9 @@
 
 #include "module.h"
 
+int ih_activate(void);
+int ih_deactivate(void);
+
 int registerInterface(int id, tcore_Metadata *metadata);
 int deregisterInterface(int id);
 tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName);

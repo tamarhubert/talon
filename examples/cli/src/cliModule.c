@@ -5,20 +5,20 @@
 #include "../../../src/module.h"
 #include "../../../lib/linkedListLibrary/src/linkedList.h"
 
-#define cli_module_NAME "cli"
-#define cli_module_VERSION_MAJOR 0
-#define cli_module_VERSION_MINOR 0
+#define CLI_MODULE_NAME "cli"
+#define CLI_MODULE_VERSION_MAJOR 0
+#define CLI_MODULE_VERSION_MINOR 0
 
 tcore_Metadata *cli_module;
 
 int onLoad() {
     // build cli_module
 	cli_module = malloc(sizeof(tcore_Metadata));
-	cli_module->name = cli_module_NAME;
-	cli_module->version.major = cli_module_VERSION_MAJOR;
-	cli_module->version.minor = cli_module_VERSION_MINOR;
-	cli_module->dependencies = malloc(sizeof(lll_List));
-	cli_module->interfaces = malloc(sizeof(lll_List));
+	cli_module->name = CLI_MODULE_NAME;
+	cli_module->version.major = CLI_MODULE_VERSION_MAJOR;
+	cli_module->version.minor = CLI_MODULE_VERSION_MINOR;
+	cli_module->dependencies = lll_newList();
+	cli_module->interfaces = lll_newList();
 
 	// cli
 	tcore_Interface *cliInterface = malloc(sizeof(tcore_Interface));
@@ -27,9 +27,7 @@ int onLoad() {
 	cliInterface->man = "void cli (void)\n\
 \tAllows execution of other cli_modules interfaces.\n";		
 	cliInterface->function = (void (*) ())cli;
-	lll_Element *cliElement = malloc(sizeof(lll_Element));
-	cliElement->value = cliInterface;
-	lll_add(cli_module->interfaces, cliElement);
+	lll_add(cli_module->interfaces, cliInterface);
 
 	return SUCCESS;
 }
@@ -48,11 +46,12 @@ int onDeactivation(){
 }
 
 int onUnload(){
-    free(cli_module->dependencies);
-    lll_Element *cliElement = lll_elementAtIndex(*cli_module->interfaces, 0);
-    free(cliElement->value);
-    free(cliElement);
-    free(cli_module->interfaces);
+    lll_freeList(cli_module->dependencies);
+    void *cliInterface = NULL;
+    lll_elementAtIndex(cli_module->interfaces, 0, &cliInterface);
+    lll_removeAtIndex(cli_module->interfaces, 0);
+    free(cliInterface);
+    lll_freeList(cli_module->interfaces);
     free(cli_module);
     cli_module = NULL;
 	return SUCCESS;

@@ -85,3 +85,7 @@ int unloadLibrary(tcore_Library* library){
     free(library);
     return SUCCESS;
 }
+
+char* lh_getError(void){
+    return lh_error;
+}

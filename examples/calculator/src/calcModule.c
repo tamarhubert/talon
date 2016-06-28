@@ -5,20 +5,20 @@
 #include "../../../src/module.h"
 #include "../../../lib/linkedListLibrary/src/linkedList.h"
 
-#define calc_module_NAME "calculator"
-#define calc_module_VERSION_MAJOR 0
-#define calc_module_VERSION_MINOR 0
+#define CALC_MODULE_NAME "calculator"
+#define CALC_MODULE_VERSION_MAJOR 0
+#define CALC_MODULE_VERSION_MINOR 0
 
 tcore_Metadata *calc_module;
 
 int onLoad() {
     // build calc_module
 	calc_module = malloc(sizeof(tcore_Metadata));
-	calc_module->name = calc_module_NAME;
-	calc_module->version.major = calc_module_VERSION_MAJOR;
-	calc_module->version.minor = calc_module_VERSION_MINOR;
-	calc_module->dependencies = calloc(1, sizeof(lll_List));
-	calc_module->interfaces = calloc(1, sizeof(lll_List));
+	calc_module->name = CALC_MODULE_NAME;
+	calc_module->version.major = CALC_MODULE_VERSION_MAJOR;
+	calc_module->version.minor = CALC_MODULE_VERSION_MINOR;
+	calc_module->dependencies = lll_newList();
+	calc_module->interfaces = lll_newList();
 
 	// addition
 	tcore_Interface *additionInterface = calloc(1, sizeof(tcore_Interface));
@@ -29,9 +29,7 @@ int onLoad() {
 \tint y\tThe second number.\n\
 \treturns\tThe two numbers added.\n";		
 	additionInterface->function = (void (*) ())addition;
-	lll_Element *additionElement = malloc(sizeof(lll_Element));
-	additionElement->value = additionInterface;
-	lll_add(calc_module->interfaces, additionElement);
+	lll_add(calc_module->interfaces, additionInterface);
 
 	return SUCCESS;
 }
@@ -49,11 +47,12 @@ int onDeactivation(){
 }
 
 int onUnload(){
-    free(calc_module->dependencies);
-    lll_Element *additionElement = lll_elementAtIndex(*calc_module->interfaces, 0);
-    free(additionElement->value);
-    free(additionElement);
-    free(calc_module->interfaces);
+    lll_freeList(calc_module->dependencies);
+    void *additionInterface = NULL;
+    lll_elementAtIndex(calc_module->interfaces, 0, &additionInterface);
+    lll_removeAtIndex(calc_module->interfaces, 0);
+    free(additionInterface);
+    lll_freeList(calc_module->interfaces);
     free(calc_module);
     calc_module = NULL;
 	return SUCCESS;

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I . -g
+CFLAGS=-I . -g -Wall
 
 OBJ=../obj
 LIB=../../../lib
