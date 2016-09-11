@@ -55,7 +55,7 @@ int main(void){
         return FATAL;
     }
     
-    //while(isActive()){}
+    while(isActive()){}
 
     unloadModule(calcLib->module);
     unloadLibrary(calcLib);

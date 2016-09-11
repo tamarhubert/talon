@@ -3,8 +3,8 @@
 
 #include "../../../src/module.h"
 
-void cli();
-
-void setResolver(tcore_Interface* (*)(const char*, int, const char*));
+void* cli(void*);
+void (*clc_add)(int,int);
+void (*shotdown)(void);
 
 #endif /* _CALC_H_ */

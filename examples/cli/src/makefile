@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I . -g -Wall
+CFLAGS=-I . -fPIC -g -Wall
 
 OBJ=../obj
 LIB=../../../lib
@@ -8,5 +8,8 @@ LIB=../../../lib
 	$(CC) -c -fPIC -o $(OBJ)/$@ $< $(CFLAGS)
 
 make: cli.o cliModule.o
-	$(CC) -shared -o $(OBJ)/cli.so $(OBJ)/cli.o $(OBJ)/cliModule.o $(LIB)/linkedListLibrary/obj/linkedList.o $(CFLAGS)
+	$(CC) -shared -o $(OBJ)/cli.so $(OBJ)/cli.o $(OBJ)/cliModule.o \
+$(LIB)/linkedListLibrary/obj/linkedList.o \
+$(LIB)/threadingProcessingLibrary/obj/threadingProcessingLibrary.o \
+$(CFLAGS)
 

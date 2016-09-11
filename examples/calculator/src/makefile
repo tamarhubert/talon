@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=-I . -g -fPIC -Wall
+CFLAGS=-I . -fPIC -g -Wall
 
 %.o: %.c
-	$(CC) -c -fPIC -o ../obj/$@ $< $(CFLAGS)
+	$(CC) -c -o ../obj/$@ $< $(CFLAGS)
 
 make: calc.o calcModule.o
 	$(CC) -shared -o ../obj/calc.so ../obj/calc.o ../obj/calcModule.o \

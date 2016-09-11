@@ -27,8 +27,8 @@ int onLoad() {
 	additionInterface->man = "int addition (int x, int y)\n\
 \tint x\tThe first number.\n\
 \tint y\tThe second number.\n\
-\treturns\tThe two numbers added.\n";		
-	additionInterface->function = (void (*) ())addition;
+\treturns\tThe two numbers added.\n";
+    additionInterface->function = (void (*) ())addition;
 	lll_add(calc_module->interfaces, additionInterface);
 
 	return SUCCESS;

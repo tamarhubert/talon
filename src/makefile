@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I . -g -Wall
+CFLAGS=-I . -fPIC -g -Wall
 CLIBS=-ldl -lpthread
 
 LIB=../lib
