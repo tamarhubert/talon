@@ -20,14 +20,14 @@ int coreApi_onLoad() {
     coreApi_module->dependencies = lll_newList();
     coreApi_module->interfaces = lll_newList();
 
-    // shotdown
-    tcore_Interface *shotdownInterface = calloc(1, sizeof(tcore_Interface));
-    shotdownInterface->name = "shotdown";
-    shotdownInterface->prototype = "void shotdown (void)";
-    shotdownInterface->man = "void shotdown ()\n\
-\t\tShotsdown talon.\n";
-    shotdownInterface->function = (void (*) ()) tcore_shotdown;
-    lll_add(coreApi_module->interfaces, shotdownInterface);
+    // shutdown
+    tcore_Interface *shutdownInterface = calloc(1, sizeof(tcore_Interface));
+    shutdownInterface->name = "shutdown";
+    shutdownInterface->prototype = "void shutdown (void)";
+    shutdownInterface->man = "void shutdown ()\n\
+\t\tShuts down talon.\n";
+    shutdownInterface->function = (void (*) ()) tcore_shutdown;
+    lll_add(coreApi_module->interfaces, shutdownInterface);
 
     return SUCCESS;
 }
@@ -46,10 +46,10 @@ int coreApi_onDeactivation(){
 
 int coreApi_onUnload(){
     lll_freeList(coreApi_module->dependencies);
-    tcore_Interface *shotdownInterface = NULL;
-    lll_elementAtIndex(coreApi_module->interfaces, 0, (void**)&shotdownInterface);
+    tcore_Interface *shutdownInterface = NULL;
+    lll_elementAtIndex(coreApi_module->interfaces, 0, (void**)&shutdownInterface);
     lll_removeAtIndex(coreApi_module->interfaces,0);
-    free(shotdownInterface);
+    free(shutdownInterface);
     lll_freeList(coreApi_module->interfaces);
     free(coreApi_module);
     coreApi_module = NULL;

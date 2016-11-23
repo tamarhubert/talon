@@ -8,7 +8,7 @@
 
 int tcore_isActive = 1;
 
-void tcore_shotdown(void) {
+void tcore_shutdown(void) {
     tcore_isActive = 0;
 }
 
@@ -55,7 +55,17 @@ int main(void){
         return FATAL;
     }
     
-    while(isActive()){}
+    while(isActive()){
+#ifdef _WIN32
+#include <windows.h>
+        Sleep(100);
+#elif __linux__
+#include <unistd.h>
+        usleep(100*1000);
+#else
+        #error "Unknown compiler"
+#endif
+    }
 
     unloadModule(calcLib->module);
     unloadLibrary(calcLib);

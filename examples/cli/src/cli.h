@@ -3,8 +3,8 @@
 
 #include "../../../src/module.h"
 
-void* cli(void*);
-void (*clc_add)(int,int);
-void (*shotdown)(void);
+void* cli_main(void*);
+int (*cli_clc_add)(int,int);
+void (*cli_tca_shutdown)(void);
 
 #endif /* _CALC_H_ */

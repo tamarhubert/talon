@@ -29,22 +29,32 @@ tcore_Metadata* getMetadata(){
 	return cli_module;
 }
 
-int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
-    shotdown = (void (*) (void)) getInterface("coreApi", 0, "shotdown")->function;
-    tcore_Interface *additionInterface = getInterface("calculator", 0, "addition");
+int
+onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
+    tcore_Interface *shutdownInterface
+        = getInterface("coreApi", 0, "shutdown");
+    if(NULL == shutdownInterface || NULL == shutdownInterface->function){
+        printf("--- [ FATAL ] --- Failed to load shutdown interface");
+        return FATAL;
+    }
+    cli_tca_shutdown = (void (*) (void)) shutdownInterface->function;
+
+    tcore_Interface *additionInterface
+        = getInterface("calculator", 0, "addition");
     if(NULL == additionInterface || NULL == additionInterface->function){
         printf("--- [ FATAL ] --- Failed to load addition interface");
         return FATAL;
     }
 
-    clc_add = (int (*) (int,int)) additionInterface->function;
-    cli_thread = tpl_createThread(cli, NULL);
-	return SUCCESS;
+    cli_clc_add = (int (*) (int,int)) additionInterface->function;
+
+    cli_thread = tpl_createThread(cli_main, NULL);
+    return SUCCESS;
 }
 
 int onDeactivation(){
-    printf("%i\n", tpl_cancelThread(cli_thread));
-    printf("%i\n", tpl_freeThread(cli_thread));
+    tpl_cancelThread(cli_thread);
+    tpl_freeThread(cli_thread);
     return SUCCESS;
 }
 
@@ -53,8 +63,8 @@ int onUnload(){
     lll_freeList(cli_module->interfaces);
     free(cli_module);
     cli_module = NULL;
-    
-	return SUCCESS;
+
+    return SUCCESS;
 }
 
 

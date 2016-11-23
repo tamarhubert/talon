@@ -1,14 +1,25 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "cli.h"
 
-void* cli(void * na){
-    char cmd = ' ';
-    while(cmd != 'q'){
-        cmd = getchar();
-        printf("\n%c\n",cmd);
-    }
-    shotdown();
-    printf(" -- [ DEBUG ] -- exitig cli\n");   
+void* cli_main(void * na){
+    int r = 0;
+    do{
+        printf("first number: ");
+        int p1 = 0;
+        scanf("%i", &p1);
+        printf("first number: %i\n", p1);
+
+        printf("second number: ");
+        int p2 = 0;
+        scanf("%i", &p2);
+        printf("second number: %i\n", p2);
+
+        r = cli_clc_add(p1,p2);
+        printf("result: %i\n", r);
+    }while(r != 0);
+    cli_tca_shutdown();
     return NULL;
 }
 
