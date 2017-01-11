@@ -22,6 +22,19 @@ int onLoad() {
 	cli_module->dependencies = lll_newList();
 	cli_module->interfaces = lll_newList();
 
+	// dependencies
+	// coreApi
+	tcore_Dependency *dCoreApi = calloc(1, sizeof(tcore_Dependency));
+	dCoreApi->moduleName = "coreApi";
+	dCoreApi->versionMajor = 0;
+	lll_add(cli_module->dependencies, dCoreApi);
+
+	// calculator
+	tcore_Dependency *dCalc = calloc(1, sizeof(tcore_Dependency));
+	dCalc->moduleName = "calculator";
+	dCalc->versionMajor = 0;
+	lll_add(cli_module->dependencies, dCalc);
+
 	return SUCCESS;
 }
 
@@ -66,5 +79,3 @@ int onUnload(){
 
     return SUCCESS;
 }
-
-

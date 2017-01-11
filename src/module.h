@@ -22,7 +22,7 @@ struct tcore_Version {
 typedef struct tcore_Dependency tcore_Dependency;
 struct tcore_Dependency {
     char *moduleName;
-    tcore_Version version;
+    int versionMajor;
 };
 
 typedef struct tcore_Interface tcore_Interface;

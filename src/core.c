@@ -18,7 +18,7 @@ int isActive(void){
 
 int main(void){
     ih_activate();
-    
+
     tcore_Module coreApi = {
         0,
         coreApi_onLoad,
@@ -32,6 +32,15 @@ int main(void){
     if(loadModule(&coreApi) < WARNING){
         printf("-- [ FATAL ] -- failed to load core api module\n");
         return FATAL;
+    }
+
+    tcore_Library *cliLib2 = loadLibrary("examples/cli/obj/cli.so");
+    if(NULL == cliLib2){
+        printf("-- [ FATAL ] -- failed to compute cli library\n");
+        return FATAL;
+    }
+    if(loadModule(cliLib2->module) < WARNING){
+        printf("-- [ FATAL ] -- failed to load cli module\n");
     }
 
     // manually loading modules calc and cli
@@ -54,7 +63,7 @@ int main(void){
         printf("-- [ FATAL ] -- failed to load cli module\n");
         return FATAL;
     }
-    
+
     while(isActive()){
 #ifdef _WIN32
 #include <windows.h>
@@ -72,7 +81,7 @@ int main(void){
 
     unloadModule(cliLib->module);
     unloadLibrary(cliLib);
-    
+
     unloadModule(&coreApi);
 
     ih_deactivate();

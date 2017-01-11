@@ -32,7 +32,7 @@ int deregisterInterface(int id){
     int i;
     for(i = 0; i < lll_size(moduleDefs); i++){
         tcore_Metadata *metadata = NULL;
-        lll_elementAtIndex(moduleDefs, i, (void**)&metadata); 
+        lll_elementAtIndex(moduleDefs, i, (void**)&metadata);
         if(metadata->id == id){
             lll_removeAtIndex(moduleDefs, i);
             return SUCCESS;
@@ -59,4 +59,29 @@ tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const c
         }
     }
     return NULL;
+}
+
+int checkDependency(tcore_Dependency *dependency){
+  int i;
+  for(i = 0; i < lll_size(moduleDefs); i++){
+    tcore_Metadata *metadata = NULL;
+    lll_elementAtIndex(moduleDefs, i, (void**)&metadata);
+    if(metadata->version.major == dependency->versionMajor
+      && strcmp(metadata->name, dependency->moduleName) == 0){
+        return SUCCESS;
+      }
+    }
+    return FATAL;
+  }
+
+int checkDependencies(lll_List *dependencies){
+  int i;
+  for(i = 0; i < lll_size(dependencies); i++){
+    tcore_Dependency *dependency = NULL;
+    lll_elementAtIndex(dependencies, i, (void**)&dependency);
+    if(checkDependency(dependency) < WARNING){
+      return FATAL;
+    }
+  }
+  return SUCCESS;
 }

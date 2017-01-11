@@ -20,6 +20,7 @@ int onLoad() {
 	calc_module->dependencies = lll_newList();
 	calc_module->interfaces = lll_newList();
 
+	// interfaces
 	// addition
 	tcore_Interface *additionInterface = calloc(1, sizeof(tcore_Interface));
 	additionInterface->name = "addition";
@@ -57,5 +58,3 @@ int onUnload(){
     calc_module = NULL;
 	return SUCCESS;
 }
-
-

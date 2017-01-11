@@ -15,9 +15,13 @@ int loadModule(tcore_Module *module){
         return FATAL;
     }
 
-    // TODO resolve dependencies
+    tcore_Metadata *metadata = module->getMetadata();
 
-    if(registerInterface(module->id, module->getMetadata()) < WARNING){
+    if(checkDependencies(metadata->dependencies) < WARNING){
+      return FATAL;
+    }
+
+    if(registerInterface(module->id, metadata) < WARNING){
         return FATAL;
     }
     if(module->activate(getInterface) < WARNING){
