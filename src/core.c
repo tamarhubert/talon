@@ -36,33 +36,20 @@ int main(void){
     }
     tcore_log(COREAPI_LL_INFO, "tcore", "loaded core api module");
 
-    // manually loading modules calc and cli
-    // calc
-    tcore_Library *calcLib = loadLibrary("examples/calculator/obj/calc.so");
-    if(NULL == calcLib){
-        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to compute calc library");
-        return FATAL;
-    }
-    tcore_log(COREAPI_LL_INFO, "tcore", "computed calculator module");
 
-    if(loadModule(calcLib->module) < WARNING){
-        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to load calc module");
+    // manually loading core cli module
+    tcore_Library *coreCliLib = loadLibrary("modules/coreCli/obj/coreCli.so");
+    if(NULL == coreCliLib){
+        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to compute core cli library");
         return FATAL;
     }
-    tcore_log(COREAPI_LL_INFO, "tcore", "loaded calculator module");
+    tcore_log(COREAPI_LL_INFO, "tcore", "computed core cli module");
 
-    // cli
-    tcore_Library *cliLib = loadLibrary("examples/cli/obj/cli.so");
-    if(NULL == cliLib){
-        tcore_log(COREAPI_LL_INFO, "tcore", "failed to compute cli library");
+    if(loadModule(coreCliLib->module) < WARNING){
+        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to load core cli module");
         return FATAL;
     }
-    tcore_log(COREAPI_LL_INFO, "tcore", "computed cli module");
-    if(loadModule(cliLib->module) < WARNING){
-        tcore_log(COREAPI_LL_INFO, "tcore", "failed to load cli module");
-        return FATAL;
-    }
-    tcore_log(COREAPI_LL_INFO, "tcore", "loaded cli module");
+    tcore_log(COREAPI_LL_INFO, "tcore", "loaded core cli module");
 
     while(isActive()){
 #ifdef _WIN32
@@ -76,15 +63,16 @@ int main(void){
 #endif
     }
 
-    unloadModule(calcLib->module);
-    unloadLibrary(calcLib);
+    tcore_log(COREAPI_LL_DEBUG, "tcore", "shutting down...");
 
-    unloadModule(cliLib->module);
-    unloadLibrary(cliLib);
+    unloadModule(coreCliLib->module);
+    unloadLibrary(coreCliLib);
 
     unloadModule(&coreApi);
 
     ih_deactivate();
+
+    tcore_log(COREAPI_LL_DEBUG, "tcore", "bye.");
 
     return 0;
 }

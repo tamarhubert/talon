@@ -22,7 +22,7 @@ int coreApi_onLoad() {
     coreApi_module->interfaces = lll_newList();
 
     // shutdown
-    tcore_Interface *shutdownInterface = calloc(1, sizeof(tcore_Interface));
+    tcore_Interface *shutdownInterface = malloc(sizeof(tcore_Interface));
     shutdownInterface->name = "shutdown";
     shutdownInterface->prototype = "void shutdown (void)";
     shutdownInterface->man = "void shutdown ()\n\
@@ -32,20 +32,22 @@ int coreApi_onLoad() {
 
     // logging
     // log
-    tcore_Interface *logInterface = calloc(1, sizeof(tcore_Interface));
+    tcore_Interface *logInterface = malloc(sizeof(tcore_Interface));
     logInterface->name = "log";
-    logInterface->prototype = "int log (int, const char*, const char*)";
-    logInterface->man = "int log (int level, const char* module, const char* message)\n\
+    logInterface->prototype = "int log (int, const char*, const char*, ...)";
+    logInterface->man = "int log (int level, const char* module, const char* message, ...)\n\
 \tLogs message to sink.\n\n\
 \tlevel\tLog level, used to filter log messages\n\
 \tmodule\tCalling modules name\n\
-\tmessage\tMessage to be logged into sink\n\n\
+\tmessage\tMessage to be logged into sink\n\
+\t...\tArgs similar to printf\n\n\
 \treturns\tMessage passed (SUCCESS), message suppressed (WARNING)";
-    logInterface->function = (void (*) ()) tcore_log;
+    logInterface->function =
+      (int (*) (int, const char*, const char*, ...)) tcore_log;
     lll_add(coreApi_module->interfaces, logInterface);
 
     // set sink
-    tcore_Interface *setSinkInterface = calloc(1, sizeof(tcore_Interface));
+    tcore_Interface *setSinkInterface = malloc(sizeof(tcore_Interface));
     setSinkInterface->name = "setSink";
     setSinkInterface->prototype = "void setSink (int (*) (int, const char*, const char*))";
     setSinkInterface->man = "void setSink (int (*sink) (int, const char*, const char*))\n\
@@ -55,7 +57,7 @@ int coreApi_onLoad() {
     lll_add(coreApi_module->interfaces, setSinkInterface);
 
     // set log level
-    tcore_Interface *setLogLevelInterface = calloc(1, sizeof(tcore_Interface));
+    tcore_Interface *setLogLevelInterface = malloc(sizeof(tcore_Interface));
     setLogLevelInterface->name = "setLogLevel";
     setLogLevelInterface->prototype = "void setLogLevel (int)";
     setLogLevelInterface->man = "void setLogLevel (int level)\n\
@@ -76,17 +78,31 @@ int coreApi_onActivation(tcore_Interface* (*getInterface)(const char*, int, cons
 }
 
 int coreApi_onDeactivation(){
-	return SUCCESS;
+  return SUCCESS;
 }
 
 int coreApi_onUnload(){
-    lll_freeList(coreApi_module->dependencies);
-    tcore_Interface *shutdownInterface = NULL;
-    lll_elementAtIndex(coreApi_module->interfaces, 0, (void**)&shutdownInterface);
-    lll_removeAtIndex(coreApi_module->interfaces,0);
-    free(shutdownInterface);
-    lll_freeList(coreApi_module->interfaces);
-    free(coreApi_module);
-    coreApi_module = NULL;
-    return SUCCESS;
+  // free dependencies
+  tcore_Dependency *dependency = NULL;
+  int i;
+  for(i = 0; i < lll_size(coreApi_module->dependencies); i++){
+    lll_elementAtIndex(coreApi_module->dependencies, i, (void**)&dependency);
+    lll_removeAtIndex(coreApi_module->dependencies, i);
+    free(dependency);
+  }
+  lll_freeList(coreApi_module->dependencies);
+
+  // free interfaces
+  tcore_Interface *interface = NULL;
+  for(i = 0; i < lll_size(coreApi_module->interfaces); i++){
+    lll_elementAtIndex(coreApi_module->interfaces, i, (void**)&interface);
+    lll_removeAtIndex(coreApi_module->interfaces, i);
+    free(interface);
+  }
+  lll_freeList(coreApi_module->interfaces);
+
+  free(coreApi_module);
+  coreApi_module = NULL;
+
+  return SUCCESS;
 }

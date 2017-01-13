@@ -1,5 +1,5 @@
-#ifndef _COREAPI_H_
-#define _COREAPI_H_
+#ifndef _CORE_API_MODULE_H_
+#define _CORE_API_MODULE_H_
 
 
 int coreApi_onLoad(void);
@@ -10,4 +10,4 @@ int coreApi_onDeactivation(void);
 int coreApi_onUnload(void);
 
 
-#endif /* _COREAPI_H_ */
+#endif /* _CORE_API_H_ */

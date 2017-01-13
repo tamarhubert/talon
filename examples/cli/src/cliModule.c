@@ -29,12 +29,6 @@ int onLoad() {
 	dCoreApi->versionMajor = 0;
 	lll_add(cli_module->dependencies, dCoreApi);
 
-	// calculator
-	tcore_Dependency *dCalc = calloc(1, sizeof(tcore_Dependency));
-	dCalc->moduleName = "calculator";
-	dCalc->versionMajor = 0;
-	lll_add(cli_module->dependencies, dCalc);
-
 	return SUCCESS;
 }
 
@@ -72,10 +66,27 @@ int onDeactivation(){
 }
 
 int onUnload(){
-    lll_freeList(cli_module->dependencies);
-    lll_freeList(cli_module->interfaces);
-    free(cli_module);
-    cli_module = NULL;
+	// free dependencies
+  tcore_Dependency *dependency = NULL;
+  int i;
+  for(i = 0; i < lll_size(cli_module->dependencies); i++){
+    lll_elementAtIndex(cli_module->dependencies, i, (void**)&dependency);
+    lll_removeAtIndex(cli_module->dependencies, i);
+    free(dependency);
+  }
+  lll_freeList(cli_module->dependencies);
 
-    return SUCCESS;
+  // free interfaces
+  tcore_Interface *interface = NULL;
+  for(i = 0; i < lll_size(cli_module->interfaces); i++){
+    lll_elementAtIndex(cli_module->interfaces, i, (void**)&interface);
+    lll_removeAtIndex(cli_module->interfaces, i);
+    free(interface);
+  }
+  lll_freeList(cli_module->interfaces);
+
+  free(cli_module);
+  cli_module = NULL;
+
+  return SUCCESS;
 }

@@ -45,17 +45,25 @@ int deregisterInterface(int id){
 
 tcore_Interface* getInterface(const char* moduleName,
         int moduleVersion, const char* interfaceName){
+    tcore_log(COREAPI_LL_INFO, "tcore", "getting interface for %s:%i:%s",
+        moduleName, moduleVersion, interfaceName);
     int i;
     for(i = 0; i < lll_size(moduleDefs); i++){
         tcore_Metadata *metadata = NULL;
         lll_elementAtIndex(moduleDefs, i, (void**)&metadata);
+        tcore_log(COREAPI_LL_INFO, "tcore", "is module %s:%i == %s:%i?",
+          metadata->name, metadata->version.major, moduleName,moduleVersion);
         if(metadata->version.major == moduleVersion
                 && strcmp(metadata->name, moduleName) == 0){
             int j; lll_List *interfaces = metadata->interfaces;
             for(j = 0; j < lll_size(interfaces); j++){
                 tcore_Interface *interface = NULL;
-                lll_elementAtIndex(interfaces, i, (void**)&interface);
+                lll_elementAtIndex(interfaces, j, (void**)&interface);
+                tcore_log(COREAPI_LL_INFO, "tcore", "is interface %s == %s?",
+                  interface->name, interfaceName);
                 if(strcmp(interface->name, interfaceName) == 0){
+                    tcore_log(COREAPI_LL_INFO, "tcore", "interface %s:%i:%s found",
+                      moduleName, moduleVersion, interfaceName);
                     return interface;
                 }
             }

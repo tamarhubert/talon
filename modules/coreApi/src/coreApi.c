@@ -2,6 +2,7 @@
 #include "coreApi.h"
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 int tcore_defaultSink(int, const char*, const char*, va_list arg);
 int tcore_logLevel = COREAPI_LL_DEBUG;
