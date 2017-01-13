@@ -9,9 +9,9 @@
 #define MH_DEACTIVATE "onDeactivation"
 #define MH_UNLOAD "onUnload"
 
-#define FATAL -2
-#define WARNING -1
-#define SUCCESS -0
+#define FATAL -200
+#define WARNING -100
+#define SUCCESS -000
 
 typedef struct tcore_Version tcore_Version;
 struct tcore_Version {

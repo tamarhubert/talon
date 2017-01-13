@@ -5,6 +5,7 @@
 #include "moduleHandler.h"
 #include "interfaceHandler.h"
 #include "../modules/coreApi/src/coreApiModule.h"
+#include "../modules/coreApi/src/coreApi.h"
 
 int tcore_isActive = 1;
 
@@ -27,42 +28,41 @@ int main(void){
         coreApi_onDeactivation,
         coreApi_onUnload
     };
-
+    tcore_setLogLevel(COREAPI_LL_INFO);
     // loading coreApi
     if(loadModule(&coreApi) < WARNING){
-        printf("-- [ FATAL ] -- failed to load core api module\n");
+        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to load core api module");
         return FATAL;
     }
-
-    tcore_Library *cliLib2 = loadLibrary("examples/cli/obj/cli.so");
-    if(NULL == cliLib2){
-        printf("-- [ FATAL ] -- failed to compute cli library\n");
-        return FATAL;
-    }
-    if(loadModule(cliLib2->module) < WARNING){
-        printf("-- [ FATAL ] -- failed to load cli module\n");
-    }
+    tcore_log(COREAPI_LL_INFO, "tcore", "loaded core api module");
 
     // manually loading modules calc and cli
+    // calc
     tcore_Library *calcLib = loadLibrary("examples/calculator/obj/calc.so");
     if(NULL == calcLib){
-        printf("-- [ FATAL ] -- failed to compute calc library\n");
+        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to compute calc library");
         return FATAL;
     }
-    if(loadModule(calcLib->module) < WARNING){
-        printf("-- [ FATAL ] -- failed to load calc module\n");
-        return FATAL;
-    }
+    tcore_log(COREAPI_LL_INFO, "tcore", "computed calculator module");
 
+    if(loadModule(calcLib->module) < WARNING){
+        tcore_log(COREAPI_LL_FATAL, "tcore", "failed to load calc module");
+        return FATAL;
+    }
+    tcore_log(COREAPI_LL_INFO, "tcore", "loaded calculator module");
+
+    // cli
     tcore_Library *cliLib = loadLibrary("examples/cli/obj/cli.so");
     if(NULL == cliLib){
-        printf("-- [ FATAL ] -- failed to compute cli library\n");
+        tcore_log(COREAPI_LL_INFO, "tcore", "failed to compute cli library");
         return FATAL;
     }
+    tcore_log(COREAPI_LL_INFO, "tcore", "computed cli module");
     if(loadModule(cliLib->module) < WARNING){
-        printf("-- [ FATAL ] -- failed to load cli module\n");
+        tcore_log(COREAPI_LL_INFO, "tcore", "failed to load cli module");
         return FATAL;
     }
+    tcore_log(COREAPI_LL_INFO, "tcore", "loaded cli module");
 
     while(isActive()){
 #ifdef _WIN32

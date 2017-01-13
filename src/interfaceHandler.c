@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "interfaceHandler.h"
+#include "../modules/coreApi/src/coreApi.h"
 #include "../lib/linkedListLibrary/src/linkedList.h"
 
 lll_List *moduleDefs;
@@ -38,10 +39,12 @@ int deregisterInterface(int id){
             return SUCCESS;
         }
     }
+    tcore_log(COREAPI_LL_WARNING, "tcore", "No interface with id %i", id);
     return WARNING;
 }
 
-tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const char* interfaceName){
+tcore_Interface* getInterface(const char* moduleName,
+        int moduleVersion, const char* interfaceName){
     int i;
     for(i = 0; i < lll_size(moduleDefs); i++){
         tcore_Metadata *metadata = NULL;
@@ -58,6 +61,8 @@ tcore_Interface* getInterface(const char* moduleName, int moduleVersion, const c
             }
         }
     }
+    tcore_log(COREAPI_LL_ERROR, "tcore", "interface %s:%i:%s not found",
+      moduleName, moduleVersion, interfaceName);
     return NULL;
 }
 
@@ -67,12 +72,16 @@ int checkDependency(tcore_Dependency *dependency){
     tcore_Metadata *metadata = NULL;
     lll_elementAtIndex(moduleDefs, i, (void**)&metadata);
     if(metadata->version.major == dependency->versionMajor
-      && strcmp(metadata->name, dependency->moduleName) == 0){
-        return SUCCESS;
-      }
+        && strcmp(metadata->name, dependency->moduleName) == 0){
+      tcore_log(COREAPI_LL_INFO, "tcore", "dependency %s:%i satisfied",
+        dependency->moduleName, dependency->versionMajor);
+      return SUCCESS;
     }
-    return FATAL;
   }
+  tcore_log(COREAPI_LL_ERROR, "tcore", "dependency %s:%i not satisfied",
+    dependency->moduleName, dependency->versionMajor);
+  return FATAL;
+}
 
 int checkDependencies(lll_List *dependencies){
   int i;
@@ -80,8 +89,10 @@ int checkDependencies(lll_List *dependencies){
     tcore_Dependency *dependency = NULL;
     lll_elementAtIndex(dependencies, i, (void**)&dependency);
     if(checkDependency(dependency) < WARNING){
+      tcore_log(COREAPI_LL_ERROR, "tcore", "dependencies not satisfied");
       return FATAL;
     }
   }
+  tcore_log(COREAPI_LL_INFO, "tcore", "dependencies satisfied");
   return SUCCESS;
 }

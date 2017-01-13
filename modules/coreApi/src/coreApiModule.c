@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "coreApi.h"
 #include "../../../src/core.h"
 #include "../../../src/module.h"
 #include "../../../lib/linkedListLibrary/src/linkedList.h"
@@ -25,9 +26,43 @@ int coreApi_onLoad() {
     shutdownInterface->name = "shutdown";
     shutdownInterface->prototype = "void shutdown (void)";
     shutdownInterface->man = "void shutdown ()\n\
-\t\tShuts down talon.\n";
+\tShuts talon down.\n";
     shutdownInterface->function = (void (*) ()) tcore_shutdown;
     lll_add(coreApi_module->interfaces, shutdownInterface);
+
+    // logging
+    // log
+    tcore_Interface *logInterface = calloc(1, sizeof(tcore_Interface));
+    logInterface->name = "log";
+    logInterface->prototype = "int log (int, const char*, const char*)";
+    logInterface->man = "int log (int level, const char* module, const char* message)\n\
+\tLogs message to sink.\n\n\
+\tlevel\tLog level, used to filter log messages\n\
+\tmodule\tCalling modules name\n\
+\tmessage\tMessage to be logged into sink\n\n\
+\treturns\tMessage passed (SUCCESS), message suppressed (WARNING)";
+    logInterface->function = (void (*) ()) tcore_log;
+    lll_add(coreApi_module->interfaces, logInterface);
+
+    // set sink
+    tcore_Interface *setSinkInterface = calloc(1, sizeof(tcore_Interface));
+    setSinkInterface->name = "setSink";
+    setSinkInterface->prototype = "void setSink (int (*) (int, const char*, const char*))";
+    setSinkInterface->man = "void setSink (int (*sink) (int, const char*, const char*))\n\
+\tSets sink to be logged into.\n\n\
+\tsink\tFunction pointer to function called by 'log'";
+    setSinkInterface->function = (void (*) ()) tcore_setSink;
+    lll_add(coreApi_module->interfaces, setSinkInterface);
+
+    // set log level
+    tcore_Interface *setLogLevelInterface = calloc(1, sizeof(tcore_Interface));
+    setLogLevelInterface->name = "setLogLevel";
+    setLogLevelInterface->prototype = "void setLogLevel (int)";
+    setLogLevelInterface->man = "void setLogLevel (int level)\n\
+\tSets log level (default 'debug').\n\n\
+\tlevel\tLog level, ...";
+    setLogLevelInterface->function = (void (*) ()) tcore_setLogLevel;
+    lll_add(coreApi_module->interfaces, setLogLevelInterface);
 
     return SUCCESS;
 }
@@ -55,5 +90,3 @@ int coreApi_onUnload(){
     coreApi_module = NULL;
     return SUCCESS;
 }
-
-
