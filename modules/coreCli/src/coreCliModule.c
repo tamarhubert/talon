@@ -37,6 +37,14 @@ tcore_Metadata* getMetadata(){
 }
 
 int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
+  tcore_Interface *logI
+      = getInterface("coreApi", 0, "log");
+  if(NULL == logI || NULL == logI->function){
+      printf("--- [ FATAL ] --- Failed to load log interface\n");
+      return FATAL;
+  }
+  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) logI->function;
+
   tcore_Interface *shutdownI
       = getInterface("coreApi", 0, "shutdown");
   if(NULL == shutdownI || NULL == shutdownI->function){
@@ -45,13 +53,13 @@ int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)
   }
   tcc_tca_shutdown = (void (*) (void)) shutdownI->function;
 
-  tcore_Interface *logI
-      = getInterface("coreApi", 0, "log");
-  if(NULL == logI || NULL == logI->function){
-      printf("--- [ FATAL ] --- Failed to load log interface\n");
+  tcore_Interface *setLogLevelI
+      = getInterface("coreApi", 0, "setLogLevel");
+  if(NULL == setLogLevelI || NULL == setLogLevelI->function){
+      printf("--- [ FATAL ] --- Failed to load shutdown interface\n");
       return FATAL;
   }
-  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) logI->function;
+  tcc_tca_setLogLevel = (void (*) (int)) setLogLevelI->function;
 
   tcc_thread = tpl_createThread(coreCli_main, NULL);
 	return SUCCESS;

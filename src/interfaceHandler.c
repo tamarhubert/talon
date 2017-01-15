@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "../lib/linkedListLibrary/src/linkedList.h"
 
 #include "interfaceHandler.h"
-#include "../modules/coreApi/src/coreApi.h"
-#include "../lib/linkedListLibrary/src/linkedList.h"
+
+#include "../modules/coreApi/src/logging.h"
 
 lll_List *moduleDefs;
 

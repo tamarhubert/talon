@@ -19,11 +19,11 @@ tcore_Library* loadLibrary(const char* path){
     }
 
     tcore_Module *module = malloc(sizeof(tcore_Module));
-    
+
     module->load = rll_get(library->handle, MH_LOAD);
     if((lh_error = rll_error()) != NULL){
         rll_close(library->handle);
-	free(library);
+        free(library);
         free(module);
         return NULL;
     }

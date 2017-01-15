@@ -1,14 +1,13 @@
 #ifndef _CORE_API_H_
 #define _CORE_API_H_
 
-#define COREAPI_LL_INFO 100
-#define COREAPI_LL_DEBUG 200
-#define COREAPI_LL_WARNING 300
-#define COREAPI_LL_ERROR 400
-#define COREAPI_LL_FATAL 500
+#include "../../../lib/linkedListLibrary/src/linkedList.h"
 
-void tcore_setSink (int (*) (int, const char*, const char*, va_list));
-void tcore_setLogLevel (int);
-int tcore_log(int, const char*, const char*, ...);
+int tcore_init(void);
+int tcore_deinit(void);
+
+int tcore_loadModule(const char*);
+int tcore_unloadModule(int);
+int tcore_getModules(lll_List**);
 
 #endif /* _CORE_API_H_ */

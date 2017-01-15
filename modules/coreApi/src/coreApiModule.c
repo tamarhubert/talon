@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../../../lib/linkedListLibrary/src/linkedList.h"
 
-#include "coreApi.h"
 #include "../../../src/core.h"
 #include "../../../src/module.h"
-#include "../../../lib/linkedListLibrary/src/linkedList.h"
+
+#include "coreApi.h"
+#include "logging.h"
 
 #define COREAPI_MODULE_NAME "coreApi"
 #define COREAPI_MODULE_VERSION_MAJOR 0
@@ -42,8 +44,7 @@ int coreApi_onLoad() {
 \tmessage\tMessage to be logged into sink\n\
 \t...\tArgs similar to printf\n\n\
 \treturns\tMessage passed (SUCCESS), message suppressed (WARNING)";
-    logInterface->function =
-      (int (*) (int, const char*, const char*, ...)) tcore_log;
+    logInterface->function = (void (*) ()) tcore_log;
     lll_add(coreApi_module->interfaces, logInterface);
 
     // set sink
@@ -74,17 +75,19 @@ tcore_Metadata* coreApi_getMetadata(){
 }
 
 int coreApi_onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
+  tcore_init();
 	return SUCCESS;
 }
 
 int coreApi_onDeactivation(){
+  tcore_deinit();
   return SUCCESS;
 }
 
 int coreApi_onUnload(){
   // free dependencies
-  tcore_Dependency *dependency = NULL;
   int i;
+  tcore_Dependency *dependency = NULL;
   for(i = 0; i < lll_size(coreApi_module->dependencies); i++){
     lll_elementAtIndex(coreApi_module->dependencies, i, (void**)&dependency);
     lll_removeAtIndex(coreApi_module->dependencies, i);
