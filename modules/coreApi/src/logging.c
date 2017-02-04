@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -11,9 +10,9 @@ int tcore_logLevel = COREAPI_LL_DEBUG;
 int (*tcore_sink) (int, const char*, const char*, va_list arg) = tcore_defaultSink;
 
 int tcore_defaultSink(int level, const char* module, const char* message, va_list args){
-  char* msg = malloc(sizeof(message)+2);
+  char* msg = malloc(strlen(message)+2);
   strcpy(msg, message);
-  strcat(msg, "\n");
+  strcat(msg, "\n\0");
   switch (level) {
     case COREAPI_LL_INFO:
       printf("[INFO:%.3i] %s: ", level, module);
@@ -39,7 +38,7 @@ int tcore_defaultSink(int level, const char* module, const char* message, va_lis
       printf("[UNKNOWN:%.3i] %s: ", level, module);
       vprintf(msg, args);
   }
-  va_end(args);
+  //va_end(args);
   return SUCCESS;
 }
 

@@ -1,6 +1,8 @@
 #ifndef _CORE_API_LOGGING_H_
 #define _CORE_API_LOGGING_H_
 
+#include <stdarg.h>
+
 #define COREAPI_LL_INFO 100
 #define COREAPI_LL_DEBUG 200
 #define COREAPI_LL_WARNING 300

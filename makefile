@@ -1,45 +1,29 @@
 CC=gcc
 CFLAGS=-I . -fPIC -g -Wall
+
+# windows:
+#CLIBS=
+# linux:
 CLIBS=-ldl -lpthread
 
 SRC=src/
 LIB=lib/
 OBJ=obj/
+BIN=bin/
 MDS=modules/
 TCA=$(MDS)coreApi/
 
-SRCS=$(TCASRC)$(SRC) $(SRC)
-
-TC_DEPS=$(addprefix $(OBJ),core libraryHandler.o moduleHandler.o interfaceHandler.o)
-TCA_DAPS=$(addprefix $(TCA)$(OBJ),coreApiModule.o coreApi.o logging.o)
-LIB_DEPS=$(LIB)linkedListLibrary/obj/linkedList.o \
+TC_DEPS := $(addprefix $(OBJ),core.o libraryHandler.o moduleHandler.o interfaceHandler.o)
+TCA_DAPS := $(addprefix $(TCA)$(OBJ),coreApiModule.o coreApi.o logging.o)
+LIB_DEPS := \
+$(LIB)linkedListLibrary/obj/linkedList.o \
 $(LIB)threadingProcessingLibrary/obj/threadingProcessingLibrary.o \
+$(LIB)runtimeLinkingLibrary/obj/runtimeLinking.o
 
-#
-$(OBJ)%.o: %.c
-	echo $@
-	echo $<
-	$(CC) -c -o $(OBJ)$@ $< $(CFLAGS)
+# compileing
+%.o:
+	$(CC) -c -o $@ $(subst .o,.c, $(subst obj,src,$@)) $(CFLAGS)
 
-%.o: %.c
-	echo $@
-	echo $<
-	$(CC) -c -o $(OBJ)$@ $< $(CFLAGS)
-
-%: %
-	echo $@
-	echo $<
-
+# linking
 make: $(TC_DEPS) $(TCA_DAPS)
-	$(CC) -o $(OBJ)talon.bin $(TC_DEPS) $(TCA_DAPS) $(LIB_DEPS) $(CLIBS) $(CFLAGS)
-
-# clean output directory
-clean:
-	rm $(OBJ)*
-
-# make libs
-libs:
-	cd lib/linkedListLibrary/lib/threadingProcessingLibrary/src && $(MAKE)
-	cd lib/linkedListLibrary/src && $(MAKE)
-	cd lib/runtimeLinkingLibrary/src && $(MAKE)
-	cd lib/threadingProcessingLibrary/src && $(MAKE)
+	$(CC) -o $(BIN)talon.bin $(TC_DEPS) $(TCA_DAPS) $(LIB_DEPS) $(CLIBS) $(CFLAGS)

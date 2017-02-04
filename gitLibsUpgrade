@@ -1,0 +1,5 @@
+git submodule foreach --recursive git checkout origin/master
+git submodule foreach --recursive git branch -D master
+git submodule foreach --recursive git checkout -b master
+git submodule foreach --recursive git branch --set-upstream-to=origin/master master
+git submodule foreach --recursive git pull --ff
