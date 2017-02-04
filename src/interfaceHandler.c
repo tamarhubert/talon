@@ -58,14 +58,14 @@ tcore_Interface* getInterface(const char* moduleName,
                 && strcmp(metadata->name, moduleName) == 0){
             int j; lll_List *interfaces = metadata->interfaces;
             for(j = 0; j < lll_size(interfaces); j++){
-                tcore_Interface *interface = NULL;
-                lll_elementAtIndex(interfaces, j, (void**)&interface);
+                tcore_Interface *intrface = NULL;
+                lll_elementAtIndex(interfaces, j, (void**)&intrface);
                 tcore_log(COREAPI_LL_INFO, "tcore", "is interface %s == %s?",
-                  interface->name, interfaceName);
-                if(strcmp(interface->name, interfaceName) == 0){
+                  intrface->name, interfaceName);
+                if(strcmp(intrface->name, interfaceName) == 0){
                     tcore_log(COREAPI_LL_INFO, "tcore", "interface %s:%i:%s found",
                       moduleName, moduleVersion, interfaceName);
-                    return interface;
+                    return intrface;
                 }
             }
         }

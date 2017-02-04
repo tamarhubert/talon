@@ -29,7 +29,7 @@ int coreApi_onLoad() {
     shutdownInterface->prototype = "void shutdown (void)";
     shutdownInterface->man = "void shutdown ()\n\
 \tShuts talon down.\n";
-    shutdownInterface->function = (void (*) ()) tcore_shutdown;
+    shutdownInterface->func = (void (*) ()) tcore_shutdown;
     lll_add(coreApi_module->interfaces, shutdownInterface);
 
     // logging
@@ -44,7 +44,7 @@ int coreApi_onLoad() {
 \tmessage\tMessage to be logged into sink\n\
 \t...\tArgs similar to printf\n\n\
 \treturns\tMessage passed (SUCCESS), message suppressed (WARNING)";
-    logInterface->function = (void (*) ()) tcore_log;
+    logInterface->func = (void (*) ()) tcore_log;
     lll_add(coreApi_module->interfaces, logInterface);
 
     // set sink
@@ -54,7 +54,7 @@ int coreApi_onLoad() {
     setSinkInterface->man = "void setSink (int (*sink) (int, const char*, const char*))\n\
 \tSets sink to be logged into.\n\n\
 \tsink\tFunction pointer to function called by 'log'";
-    setSinkInterface->function = (void (*) ()) tcore_setSink;
+    setSinkInterface->func = (void (*) ()) tcore_setSink;
     lll_add(coreApi_module->interfaces, setSinkInterface);
 
     // set log level
@@ -64,7 +64,7 @@ int coreApi_onLoad() {
     setLogLevelInterface->man = "void setLogLevel (int level)\n\
 \tSets log level (default 'debug').\n\n\
 \tlevel\tLog level, ...";
-    setLogLevelInterface->function = (void (*) ()) tcore_setLogLevel;
+    setLogLevelInterface->func = (void (*) ()) tcore_setLogLevel;
     lll_add(coreApi_module->interfaces, setLogLevelInterface);
 
     return SUCCESS;
@@ -96,11 +96,11 @@ int coreApi_onUnload(){
   lll_freeList(coreApi_module->dependencies);
 
   // free interfaces
-  tcore_Interface *interface = NULL;
+  tcore_Interface *intrface = NULL;
   for(i = 0; i < lll_size(coreApi_module->interfaces); i++){
-    lll_elementAtIndex(coreApi_module->interfaces, i, (void**)&interface);
+    lll_elementAtIndex(coreApi_module->interfaces, i, (void**)&intrface);
     lll_removeAtIndex(coreApi_module->interfaces, i);
-    free(interface);
+    free(intrface);
   }
   lll_freeList(coreApi_module->interfaces);
 

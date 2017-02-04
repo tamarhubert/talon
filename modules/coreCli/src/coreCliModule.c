@@ -39,27 +39,27 @@ tcore_Metadata* getMetadata(){
 int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
   tcore_Interface *logI
       = getInterface("coreApi", 0, "log");
-  if(NULL == logI || NULL == logI->function){
+  if(NULL == logI || NULL == logI->func){
       printf("--- [ FATAL ] --- Failed to load log interface\n");
       return FATAL;
   }
-  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) logI->function;
+  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) logI->func;
 
   tcore_Interface *shutdownI
       = getInterface("coreApi", 0, "shutdown");
-  if(NULL == shutdownI || NULL == shutdownI->function){
+  if(NULL == shutdownI || NULL == shutdownI->func){
       printf("--- [ FATAL ] --- Failed to load shutdown interface\n");
       return FATAL;
   }
-  tcc_tca_shutdown = (void (*) (void)) shutdownI->function;
+  tcc_tca_shutdown = (void (*) (void)) shutdownI->func;
 
   tcore_Interface *setLogLevelI
       = getInterface("coreApi", 0, "setLogLevel");
-  if(NULL == setLogLevelI || NULL == setLogLevelI->function){
+  if(NULL == setLogLevelI || NULL == setLogLevelI->func){
       printf("--- [ FATAL ] --- Failed to load shutdown interface\n");
       return FATAL;
   }
-  tcc_tca_setLogLevel = (void (*) (int)) setLogLevelI->function;
+  tcc_tca_setLogLevel = (void (*) (int)) setLogLevelI->func;
 
   tcc_thread = tpl_createThread(coreCli_main, NULL);
 	return SUCCESS;
@@ -83,11 +83,11 @@ int onUnload(){
   lll_freeList(coreCli_module->dependencies);
 
   // free interfaces
-  tcore_Interface *interface = NULL;
+  tcore_Interface *intrface = NULL;
   for(i = 0; i < lll_size(coreCli_module->interfaces); i++){
-    lll_elementAtIndex(coreCli_module->interfaces, i, (void**)&interface);
+    lll_elementAtIndex(coreCli_module->interfaces, i, (void**)&intrface);
     lll_removeAtIndex(coreCli_module->interfaces, i);
-    free(interface);
+    free(intrface);
   }
   lll_freeList(coreCli_module->interfaces);
 

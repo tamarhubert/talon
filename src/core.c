@@ -4,6 +4,7 @@
 #include "module.h"
 #include "moduleHandler.h"
 #include "interfaceHandler.h"
+
 #include "../modules/coreApi/src/coreApiModule.h"
 #include "../modules/coreApi/src/logging.h"
 
@@ -28,14 +29,13 @@ int main(void){
         coreApi_onDeactivation,
         coreApi_onUnload
     };
-    tcore_setLogLevel(COREAPI_LL_WARNING);
+    tcore_setLogLevel(COREAPI_LL_INFO);
     // loading coreApi
     if(loadModule(&coreApi) < WARNING){
         tcore_log(COREAPI_LL_FATAL, "tcore", "failed to load core api module");
         return FATAL;
     }
     tcore_log(COREAPI_LL_INFO, "tcore", "loaded core api module");
-
 
     // manually loading core cli module
     tcore_Library *coreCliLib = loadLibrary("modules/coreCli/obj/coreCli.so");

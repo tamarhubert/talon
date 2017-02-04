@@ -30,7 +30,7 @@ struct tcore_Interface {
     char *name;
     char *prototype;
     char *man;
-    void (*function) ();
+    void (*func) ();
 };
 
 typedef struct tcore_Metadata tcore_Metadata;
