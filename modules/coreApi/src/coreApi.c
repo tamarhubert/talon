@@ -1,73 +1,49 @@
-#include "../../../src/libraryHandler.h"
-#include "../../../src/moduleHandler.h"
-#include "../../../src/module.h"
+#include <stdlib.h>
+#include "library.h"
 
 #include "coreApi.h"
 #include "logging.h"
+#include "main.h"
 
-lll_List *tcore_modules;
+static volatile int tca_isActive = 1;
+static tc_ModulePool *tca_pool;
 
-int tcore_init(){
-  tcore_modules = lll_newList();
-  return SUCCESS;
+void tca_setPool(tc_ModulePool *pool){
+  tca_pool = pool;
 }
 
-int tcore_deinit(){
-  int i;
-  for(i = 0; i < lll_size(tcore_modules); i++){
-    tcore_Library *library = NULL;
-    lll_elementAtIndex(tcore_modules, i, (void**)&library);
-    tcore_Metadata *metadata = library->module->getMetadata();
-    tcore_log(COREAPI_LL_INFO, "tcore", "unloading module %s v%i.%i",
-      metadata->name, metadata->version.major, metadata->version.minor);
-    unloadModule(library->module);
-    unloadLibrary(library);
-    lll_removeAtIndex(tcore_modules, i);
-    tcore_log(COREAPI_LL_INFO, "tcore", "unloaded module");
-  }
-  return SUCCESS;
+int tca_getIsActive(void){
+  return tca_isActive;
 }
 
-int tcore_loadModule(const char* path){
-  tcore_Library *library = loadLibrary(path);
-  if(NULL == library){
-    tcore_log(COREAPI_LL_ERROR, "tcore", "failed to load library at %s", path);
-    return FATAL;
-  }
-  tcore_log(COREAPI_LL_INFO, "tcore", "loaded library at %s", path);
-
-  if(loadModule(library->module) < WARNING){
-    tcore_log(COREAPI_LL_ERROR, "tcore", "failed to load moudle at %s", path);
-    return FATAL;
-  }
-  tcore_Metadata *metadata = library->module->getMetadata();
-  tcore_log(COREAPI_LL_INFO, "tcore", "loaded module %s v%i.%i",
-    metadata->name, metadata->version.major, metadata->version.minor);
-
-  lll_add(tcore_modules, (void*)library);
-  return library->module->id;
+void tca_shutdown(void) {
+    tca_isActive = 0;
 }
 
-int tcore_unloadModule(int id){
-  int i;
-  for(i = 0; i < lll_size(tcore_modules); i++){
-    tcore_Library *library = NULL;
-    lll_elementAtIndex(tcore_modules, i, (void**)&library);
-    if(library->module->id == id){
-      tcore_Metadata *metadata = library->module->getMetadata();
-      tcore_log(COREAPI_LL_INFO, "tcore", "unloading module %s v%i.%i",
-        metadata->name, metadata->version.major, metadata->version.minor);
-      unloadModule(library->module);
-      unloadLibrary(library);
-      lll_removeAtIndex(tcore_modules, i);
-      tcore_log(COREAPI_LL_INFO, "tcore", "unloaded module");
-      return SUCCESS;
-    }
-  }
-  tcore_log(COREAPI_LL_WARNING, "tcore", "No module loaded with id %i", id);
-  return WARNING;
+int tca_getFunction(
+  const char* moduleName,
+  int moduleVersion,
+  const char*functionName,
+  tmf_Function* result)
+{
+  return tc_getFunction(
+    tca_pool,
+    moduleName,
+    moduleVersion,
+    functionName,
+    result);
+};
+
+int tca_loadModule(const char* path){
+  tmf_Function activationFunction;
+  tca_getFunction(
+    TCA_MODULE_NAME,
+    TCA_MODULE_VERSION_MAJOR,
+    "getFunction",
+    &activationFunction);
+  return tc_integrateModule(tca_pool, activationFunction, path);
 }
 
-int tcore_getModules(lll_List** modules){
-  return FATAL;
+int tca_unloadModule(int id){
+  return tc_disintegrateModule(tca_pool, id);
 }

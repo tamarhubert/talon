@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "coreCli.h"
-#include "../../coreApi/src/logging.h"
+#include "logging.h"
 
 void coreCli_logging(void);
 void coreCli_setLogLevel(void);
@@ -23,7 +23,7 @@ void* coreCli_main(void * na){
     printf("%s", coreCli_menu);
     scanf("%i", &r);
 
-    tcc_tca_log(COREAPI_LL_INFO, "coreCli", "input: %i", r);
+    tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "input: %i", r);
     switch (r) {
       case 1:
         coreCli_logging();
@@ -34,7 +34,7 @@ void* coreCli_main(void * na){
     }
   }while(r != 0);
   tcc_tca_shutdown();
-  tcc_tca_log(COREAPI_LL_INFO, "coreCli", "shutting down");
+  tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "shutting down");
 
   return NULL;
 }
@@ -52,7 +52,7 @@ void coreCli_logging(){
     printf("%s", coreCli_menu_logging);
     scanf("%i", &r);
 
-    tcc_tca_log(COREAPI_LL_INFO, "coreCli", "input: %i", r);
+    tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "input: %i", r);
     switch (r) {
       case 1:
         coreCli_setLogLevel();
@@ -82,7 +82,7 @@ void coreCli_log(){
     printf("log message? (max. 255)\n>> ");
     fgets(message, sizeof(message), stdin);
 
-    tcc_tca_log(logLevel, "coreCli", message);
+    tcc_tca_log(logLevel, TCC_LOG_NAME, message);
 }
 
 void coreCli_modules(){

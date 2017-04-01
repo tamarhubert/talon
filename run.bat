@@ -41,13 +41,15 @@ for /L %%a in (0,1,%makefilePathsSize%) do (
 
     cd !makefilePaths[%%a]!
 
+    echo [*] Delete bin directory including its contents
+    rmdir /S /Q bin
     echo [*] Delete obj directory including its contents
     rmdir /S /Q obj
 
-    echo [*] Delete obj directory including its contents
-    rmdir /S /Q ..\obj
-    echo [*] Creating directory ..\obj
-    mkdir ..\obj
+    echo [*] Creating directory bin
+    mkdir bin
+    echo [*] Creating directory obj
+    mkdir obj
 
     echo [*] Starting build process...
     echo ============================================================
@@ -68,7 +70,7 @@ echo.
 echo.
 set /P c=Would you like to run %talonBin%? [y/n]:
 
-if NOT "%c%" == "n" (
+if "%c%" == "y" (
     echo [*] Starting Talon
     start %talonBin%
 )

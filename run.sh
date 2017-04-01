@@ -11,6 +11,8 @@ for i in {0..5}
 do
     echo
     cd ${paths[i]}
+    rm -r bin
+    mkdir bin
     rm -r ../obj
     mkdir ../obj
     make

@@ -1,60 +1,51 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../../src/module.h"
+#include "module.h"
 
 #include "logging.h"
+#include "main.h"
 
-int tcore_defaultSink(int, const char*, const char*, va_list arg);
-int tcore_logLevel = COREAPI_LL_DEBUG;
-int (*tcore_sink) (int, const char*, const char*, va_list arg) = tcore_defaultSink;
+int tca_defaultSink(int, const char*, const char*, va_list arg);
+int tca_logLevel = TCA_LL_DEBUG;
+int (*tca_sink) (int, const char*, const char*, va_list arg) = tca_defaultSink;
 
-int tcore_defaultSink(int level, const char* module, const char* message, va_list args){
+int tca_defaultSink(int level, const char* module, const char* message, va_list args){
   char* msg = malloc(strlen(message)+2);
   strcpy(msg, message);
   strcat(msg, "\n\0");
-  switch (level) {
-    case COREAPI_LL_INFO:
-      printf("[INFO:%.3i] %s: ", level, module);
-      vprintf(msg, args);
-      break;
-    case COREAPI_LL_DEBUG:
-      printf("[DEBUG:%3i] %s: ", level, module);
-      vprintf(msg, args);
-      break;
-    case COREAPI_LL_WARNING:
-      printf("[WARNING:%3i] %s: ", level, module);
-      vprintf(msg, args);
-      break;
-    case COREAPI_LL_ERROR:
-      printf("[ERROR:%3i] %s: ", level, module);
-      vprintf(msg, args);
-      break;
-    case COREAPI_LL_FATAL:
-      printf("[FATAL:%3i] %s: ", level, module);
-      vprintf(msg, args);
-      break;
-    default:
-      printf("[UNKNOWN:%.3i] %s: ", level, module);
-      vprintf(msg, args);
+if(level >= TCA_LL_FATAL) {
+    printf("[FATAL:%3i] %s: ", level, module);
+    vprintf(msg, args);
+  } else if(level >= TCA_LL_ERROR) {
+    printf("[ERROR:%3i] %s: ", level, module);
+    vprintf(msg, args);
+  } else if(level >= TCA_LL_WARNING) {
+    printf("[WARNING:%3i] %s: ", level, module);
+    vprintf(msg, args);
+  } else if(level >= TCA_LL_DEBUG) {
+    printf("[DEBUG:%3i] %s: ", level, module);
+    vprintf(msg, args);
+  } else {
+    printf("[INFO:%.3i] %s: ", level, module);
+    vprintf(msg, args);
   }
-  //va_end(args);
   return SUCCESS;
 }
 
-void tcore_setSink (int (*sink) (int, const char*, const char*, va_list)){
-  tcore_sink = sink ? sink : tcore_defaultSink;
+void tca_setSink (int (*sink) (int, const char*, const char*, va_list)){
+  tca_sink = sink ? sink : tca_defaultSink;
 }
 
-void tcore_setLogLevel (int level){
-  tcore_logLevel = level;
+void tca_setLogLevel (int level){
+  tca_logLevel = level;
 }
 
-int tcore_log (int level, const char* module, const char* message, ...){
-  if(level >= tcore_logLevel){
+int tca_log (int level, const char* module, const char* message, ...){
+  if(level >= tca_logLevel){
     va_list args;
     va_start(args, message);
-    int result = tcore_sink(level, module, message, args);
+    int result = tca_sink(level, module, message, args);
     va_end(args);
     return result;
   }

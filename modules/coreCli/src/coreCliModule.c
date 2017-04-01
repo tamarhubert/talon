@@ -2,97 +2,74 @@
 #include <stdlib.h>
 
 #include "coreCli.h"
-#include "../../../src/core.h"
-#include "../../../src/module.h"
-#include "../../../lib/linkedListLibrary/src/linkedList.h"
+#include "core.h"
+#include "main.h"
+#include "module.h"
+#include "linkedList.h"
+#include "logging.h"
 
-#define COREAPI_MODULE_NAME "coreCli"
-#define COREAPI_MODULE_VERSION_MAJOR 0
-#define COREAPI_MODULE_VERSION_MINOR 0
+#define TCC_MODULE_NAME "coreCli"
+#define TCC_MODULE_VERSION_MAJOR 0
+#define TCC_MODULE_VERSION_MINOR 0
 
-tcore_Metadata *coreCli_module;
-tpl_Thread *tcc_thread;
+static tmm_Module *tcc_module;
+static tpl_Thread *tcc_thread;
 
-int onLoad() {
-    // build coreApi_module
-    coreCli_module = malloc(sizeof(tcore_Metadata));
-    coreCli_module->name = COREAPI_MODULE_NAME;
-    coreCli_module->version.major = COREAPI_MODULE_VERSION_MAJOR;
-    coreCli_module->version.minor = COREAPI_MODULE_VERSION_MINOR;
-    coreCli_module->dependencies = lll_newList();
-    coreCli_module->interfaces = lll_newList();
+int onLoad(tmm_Module *module) {
+  tmm_newModule(
+    TCC_MODULE_NAME,
+    TCC_MODULE_VERSION_MAJOR,
+    TCC_MODULE_VERSION_MINOR,
+    &tcc_module
+  );
 
-    // dependencies
-    // coreApi
-    tcore_Dependency *dCoreApi = calloc(1, sizeof(tcore_Dependency));
-    dCoreApi->moduleName = "coreApi";
-    dCoreApi->versionMajor = 0;
-    lll_add(coreCli_module->dependencies, dCoreApi);
+  tmm_addDependency(tcc_module, "coreApi", 0);
 
-    return SUCCESS;
+  *module = *tcc_module;
+
+  return SUCCESS;
 }
 
-tcore_Metadata* getMetadata(){
-	return coreCli_module;
-}
+int onActivation(tmf_Function activationFunction){
+  int (*getFunction)(const char*, int, const char*, tmf_Function*)
+    = (int (*)(const char*, int, const char*, tmf_Function*))
+      activationFunction.pointer;
 
-int onActivation(tcore_Interface* (*getInterface)(const char*, int, const char*)){
-  tcore_Interface *logI
-      = getInterface("coreApi", 0, "log");
-  if(NULL == logI || NULL == logI->func){
-      printf("--- [ FATAL ] --- Failed to load log interface\n");
-      return FATAL;
+  tmf_Function function;
+  int result;
+  if((result = getFunction("coreApi", 0, "log", &function)) < WARNING){
+    printf("--- [ FATAL ] --- failed to load log interface\n");
+    return ERROR;
   }
-  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) logI->func;
+  tcc_tca_log = (int (*) (int, const char*, const char*, ...)) function.pointer;
+  tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "loaded log interface");
 
-  tcore_Interface *shutdownI
-      = getInterface("coreApi", 0, "shutdown");
-  if(NULL == shutdownI || NULL == shutdownI->func){
-      printf("--- [ FATAL ] --- Failed to load shutdown interface\n");
-      return FATAL;
+  if((result = getFunction("coreApi", 0, "setLogLevel", &function)) < WARNING){
+    tcc_tca_log(TCA_LL_ERROR, TCC_LOG_NAME, "failed to load shutdown interface");
+    return ERROR;
   }
-  tcc_tca_shutdown = (void (*) (void)) shutdownI->func;
+  tcc_tca_setLogLevel = (void (*) (int)) function.pointer;
+  tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "loaded setLogLevel interface");
 
-  tcore_Interface *setLogLevelI
-      = getInterface("coreApi", 0, "setLogLevel");
-  if(NULL == setLogLevelI || NULL == setLogLevelI->func){
-      printf("--- [ FATAL ] --- Failed to load shutdown interface\n");
-      return FATAL;
+  if((result = getFunction("coreApi", 0, "shutdown", &function)) < WARNING){
+    tcc_tca_log(TCA_LL_ERROR, TCC_LOG_NAME, "failed to load shutdown interface");
+    return ERROR;
   }
-  tcc_tca_setLogLevel = (void (*) (int)) setLogLevelI->func;
+  tcc_tca_shutdown = (void (*) (void)) function.pointer;
+  tcc_tca_log(TCA_LL_INFO, TCC_LOG_NAME, "loaded shutdown interface");
 
   tcc_thread = tpl_createThread(coreCli_main, NULL);
+
 	return SUCCESS;
 }
 
 int onDeactivation(){
   tpl_cancelThread(tcc_thread);
   tpl_freeThread(tcc_thread);
-	return SUCCESS;
+  return SUCCESS;
 }
 
 int onUnload(){
-  // free dependencies
-  tcore_Dependency *dependency = NULL;
-  int i;
-  for(i = 0; i < lll_size(coreCli_module->dependencies); i++){
-    lll_elementAtIndex(coreCli_module->dependencies, i, (void**)&dependency);
-    lll_removeAtIndex(coreCli_module->dependencies, i);
-    free(dependency);
-  }
-  lll_freeList(coreCli_module->dependencies);
-
-  // free interfaces
-  tcore_Interface *intrface = NULL;
-  for(i = 0; i < lll_size(coreCli_module->interfaces); i++){
-    lll_elementAtIndex(coreCli_module->interfaces, i, (void**)&intrface);
-    lll_removeAtIndex(coreCli_module->interfaces, i);
-    free(intrface);
-  }
-  lll_freeList(coreCli_module->interfaces);
-
-  free(coreCli_module);
-  coreCli_module = NULL;
-
+  tmm_freeModule(tcc_module);
   return SUCCESS;
 }

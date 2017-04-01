@@ -2,12 +2,11 @@
 #define _CORE_API_MODULE_H_
 
 
-int coreApi_onLoad(void);
-tcore_Metadata* coreApi_getMetadata(void);
-int coreApi_onActivation(
-    tcore_Interface* (*getInterface)(const char*, int, const char*));
-int coreApi_onDeactivation(void);
-int coreApi_onUnload(void);
+int tca_onLoad(tmm_Module*);
+int tca_onActivation(
+    tc_ModulePool* pool);
+int tca_onDeactivation(void);
+int tca_onUnload(void);
 
 
 #endif /* _CORE_API_H_ */
